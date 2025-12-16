@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap');
+
+@theme {
+  --color-primary: #e93131;
+  --color-primary-dark: #cc2a2a;
+  --color-primary-light: #f13333;
+  --color-neon-green: #30ee43;
+  --color-apple-red: #ff2f2f;
+  --color-grey-0: #fefefe;
+  --color-grey-200: #999999;
+  --color-grey-400: #777777;
+  --color-grey-600: #555555;
+  --color-grey-800: #333333;
+  --color-grey-1000: #212121;
+}
+
+@layer base {
+  * {
+    font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+
+  body {
+    @apply bg-[#f4f4f4] overflow-x-hidden m-0;
+  }
+
+  html {
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 0px transparent;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    -webkit-box-shadow: inset 6px 0 0px #e93131;
+  }
+}
+
+@layer utilities {
+  @keyframes flashing {
+    0% {
+      opacity: 0.2;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.2;
+    }
+  }
+}
