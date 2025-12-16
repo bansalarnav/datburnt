@@ -16,10 +16,11 @@
   "dependencies": {
     "@elysiajs/cookie": "^0.8.0",
     "@elysiajs/cors": "^1.0.0",
-    "elysia": "^1.0.0",
-    "jsonwebtoken": "^8.5.1",
+    "@elysiajs/jwt": "^1.4.0",
     "cookie": "^0.5.0",
     "drizzle-orm": "^0.29.0",
+    "elysia": "^1.0.0",
+    "jsonwebtoken": "^8.5.1",
     "postgres": "^3.4.3"
   },
   "devDependencies": {

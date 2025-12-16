@@ -28,11 +28,11 @@ const config: Config = {
   cookieConfig:
     process.env.NODE_ENV === 'production'
       ? {
-          httpOnly: true,
-          maxAge: 15552000000,
-          secure: true,
-          sameSite: 'none',
-        }
+        httpOnly: true,
+        maxAge: 15552000000,
+        secure: true,
+        sameSite: 'none',
+      }
       : { httpOnly: true, maxAge: 15552000000 },
   removeCookieConfig:
     process.env.NODE_ENV === 'production'
