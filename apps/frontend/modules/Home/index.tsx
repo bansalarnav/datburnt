@@ -6,12 +6,15 @@ import { Popup, useOnClickOutside } from "../../components/Popup";
 import PrimaryButton from "../../components/Button/Primary";
 import Slider from "react-input-slider";
 import { useRouter } from "next/router";
-import { hop } from "@onehop/client";
-import { useReadChannelState } from "@onehop/react";
+// ============================================
+// HOP SERVICE DISABLED - Service no longer exists
+// ============================================
+// import { hop } from "@onehop/client";
+// import { useReadChannelState } from "@onehop/react";
 import axios from "../../utils/axios";
 import Image from "next/image";
 
-const channelId = "online_users";
+// const channelId = "online_users";
 
 import PublicIcon from "../../public/icons/public.svg";
 import PrivateIcon from "../../public/icons/private.svg";
@@ -37,7 +40,11 @@ interface ChannelState {
 }
 
 export default function Content() {
-  const { state } = useReadChannelState(channelId);
+  // ============================================
+  // HOP SERVICE DISABLED - Using dummy data instead
+  // ============================================
+  // const { state } = useReadChannelState(channelId);
+  const state = null; // Dummy state
   const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
   const router = useRouter();
 
@@ -62,9 +69,12 @@ export default function Content() {
   const [games, setGames] = useState<Game[]>([]);
   const [codeInput, setCodeInput] = useState("");
 
-  hop.init({
-    projectId: "project_NDYyNjgzMTExOTM4NDU4MTc",
-  });
+  // ============================================
+  // HOP SERVICE DISABLED - Commenting out hop.init
+  // ============================================
+  // hop.init({
+  //   projectId: "project_NDYyNjgzMTExOTM4NDU4MTc",
+  // });
 
   useOnClickOutside(popupRef, () => {
     setPopupState(false);
@@ -103,17 +113,24 @@ export default function Content() {
   }, []);
 
   useEffect(() => {
-    const channelState = state as unknown as ChannelState;
-    if (state && channelState.users) {
-      setOnlineFriends(
-        friends.filter(
-          (friend) =>
-            channelState.users.filter(
-              (usera: any) => usera._id.toString() === friend._id.toString()
-            ).length > 0
-        )
-      );
-    }
+    // ============================================
+    // HOP SERVICE DISABLED - Commenting out online friends calculation
+    // Using dummy data: assuming no friends are online
+    // ============================================
+    // const channelState = state as unknown as ChannelState;
+    // if (state && channelState.users) {
+    //   setOnlineFriends(
+    //     friends.filter(
+    //       (friend) =>
+    //         channelState.users.filter(
+    //           (usera: any) => usera._id.toString() === friend._id.toString()
+    //         ).length > 0
+    //     )
+    //   );
+    // }
+    
+    // Set empty array for online friends (no hop service)
+    setOnlineFriends([]);
   }, [state, friends]);
 
   useEffect(() => {

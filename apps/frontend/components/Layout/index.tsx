@@ -33,7 +33,7 @@ export default function Layout({
         />
 
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://datburnt.hop.sh/" />
+        <meta property="og:url" content="https://datburnt.com/" />
         <meta property="og:title" content="datburnt - keep some ice handy" />
         <meta
           property="og:description"
@@ -41,11 +41,11 @@ export default function Layout({
         />
         <meta
           property="og:image"
-          content="https://datburnt.hop.sh/banner.png"
+          content="https://datburnt.com/banner.png"
         />
 
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://datburnt.hop.sh/" />
+        <meta property="twitter:url" content="https://datburnt.com/" />
         <meta
           property="twitter:title"
           content="datburnt - keep some ice handy"
@@ -56,7 +56,7 @@ export default function Layout({
         />
         <meta
           property="twitter:image"
-          content="https://datburnt.hop.sh/banner.png"
+          content="https://datburnt.com/banner.png"
         />
       </Head>
       <>

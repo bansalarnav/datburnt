@@ -80,11 +80,11 @@ export default function Header(props: HeaderProps) {
             className="text-lg font-semibold mr-6 text-[#4a4a4a] cursor-pointer"
             onClick={() => {
               navigator.clipboard.writeText(
-                `https://datburnt.hop.sh/${router.query.code}`
+                `${window.location.origin}/${router.query.code}`
               );
             }}
           >
-            datburnt.hop.sh/{router.query.code}
+            {window.location.host}/{router.query.code}
           </div>
         ) : (
           <></>
