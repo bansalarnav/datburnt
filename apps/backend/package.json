@@ -14,6 +14,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@datburnt/types": "workspace:*",
     "@elysiajs/cookie": "^0.8.0",
     "@elysiajs/cors": "^1.0.0",
     "@elysiajs/jwt": "^1.4.0",

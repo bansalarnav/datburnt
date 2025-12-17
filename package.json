@@ -4,7 +4,8 @@
   "private": true,
   "description": "A multiplayer game where players battle it out by roasting images of famous personalities",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "dev": "turbo run dev",
