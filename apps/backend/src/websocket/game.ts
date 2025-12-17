@@ -1,15 +1,15 @@
-import { ServerWebSocket } from 'bun';
-import state, { setGames, setSockets, type Game } from '../state';
-import { parse } from 'cookie';
-import jwt from 'jsonwebtoken';
-import UserModel, { type User } from '../models/User';
+import type { ServerWebSocket } from "bun";
+import { parse } from "cookie";
+import jwt from "jsonwebtoken";
+import UserModel, { type User } from "../models/User";
+import state, { type Game, setGames, setSockets } from "../state";
 
 interface WebSocketData {
   user?: User;
 }
 
 function findGame(code: string): Game | undefined {
-  return state.games.find(game => game.code === code);
+  return state.games.find((game) => game.code === code);
 }
 
 const images = [
@@ -107,7 +107,10 @@ const images = [
   },
 ];
 
-function getRound(categories: string[], previousRounds: { image: string; category: string }[]) {
+function getRound(
+  _categories: string[],
+  previousRounds: { image: string; category: string }[]
+) {
   let foundUnique = false;
   let ques: { url: string; category: string } | undefined;
 
@@ -122,8 +125,8 @@ function getRound(categories: string[], previousRounds: { image: string; categor
   }
 
   return {
-    image: ques!.url,
-    category: ques!.category,
+    image: ques?.url,
+    category: ques?.category,
   };
 }
 
@@ -135,8 +138,10 @@ function updateGame(code: string, newGame: Game) {
   setGames(games);
 }
 
-export async function authenticateGameWebSocket(headers: Headers): Promise<User | null> {
-  const cookieHeader = headers.get('cookie');
+export async function authenticateGameWebSocket(
+  headers: Headers
+): Promise<User | null> {
+  const cookieHeader = headers.get("cookie");
   if (!cookieHeader) return null;
 
   const cookies = parse(cookieHeader);
@@ -148,15 +153,19 @@ export async function authenticateGameWebSocket(headers: Headers): Promise<User 
     const decoded = jwt.verify(token, process.env.JWT_KEY!) as { id: string };
     const user = await UserModel.findOne({ id: decoded.id });
     return user;
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
 
-export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: string, socketId: string) {
+export function setupGameWebSocket(
+  ws: ServerWebSocket<WebSocketData>,
+  message: string,
+  socketId: string
+) {
   const data = JSON.parse(message);
 
-  if (data.type === 'disconnect') {
+  if (data.type === "disconnect") {
     const code = state.sockets[socketId];
 
     if (code) {
@@ -168,7 +177,9 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
 
         if (index >= 0) {
           game.players.splice(index, 1);
-          console.log(`${socketId} left room ${code}. ${game.players.length} Players left in room`);
+          console.log(
+            `${socketId} left room ${code}. ${game.players.length} Players left in room`
+          );
           updateGame(code, game);
           setSockets({ ...state.sockets, [socketId]: null });
 
@@ -186,44 +197,52 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
     }
   }
 
-  if (data.type === 'join-game') {
+  if (data.type === "join-game") {
     const code = data.code;
     const game = findGame(code);
 
     if (!game) {
-      ws.send(JSON.stringify({
-        type: 'game-details',
-        success: false,
-        message: "Game not Found",
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "game-details",
+          success: false,
+          message: "Game not Found",
+        })
+      );
     } else {
       if (game.started) {
-        ws.send(JSON.stringify({
-          type: 'game-details',
-          success: false,
-          message: "Game has already started",
-        }));
+        ws.send(
+          JSON.stringify({
+            type: "game-details",
+            success: false,
+            message: "Game has already started",
+          })
+        );
       } else if (game.players.length >= game.maxPlayers) {
-        ws.send(JSON.stringify({
-          type: 'game-details',
-          success: false,
-          message: "Game is full",
-        }));
+        ws.send(
+          JSON.stringify({
+            type: "game-details",
+            success: false,
+            message: "Game is full",
+          })
+        );
       } else if (game.players.find((p) => p.id === ws.data.user?.id)) {
-        ws.send(JSON.stringify({
-          type: 'game-details',
-          success: false,
-          message: "You have already joined this game",
-        }));
+        ws.send(
+          JSON.stringify({
+            type: "game-details",
+            success: false,
+            message: "You have already joined this game",
+          })
+        );
       } else {
         const newGame = {
           ...game,
           players: [
             {
-              id: ws.data.user!.id,
+              id: ws.data.user?.id,
               socketId: socketId,
-              username: ws.data.user!.name,
-              avatarUrl: ws.data.user!.avatar,
+              username: ws.data.user?.name,
+              avatarUrl: ws.data.user?.avatar,
               score: 0,
             },
             ...game.players,
@@ -232,24 +251,26 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
 
         updateGame(code, newGame);
         setSockets({ ...state.sockets, [socketId]: code });
-        
-        ws.send(JSON.stringify({
-          type: 'game-details',
-          success: true,
-          game: {
-            ...newGame,
-            rounds: null,
-            votes: null,
-          },
-        }));
+
+        ws.send(
+          JSON.stringify({
+            type: "game-details",
+            success: true,
+            game: {
+              ...newGame,
+              rounds: null,
+              votes: null,
+            },
+          })
+        );
       }
     }
   }
 
-  if (data.type === 'start') {
+  if (data.type === "start") {
     const code = data.code;
     const game = findGame(code);
-    
+
     if (game && game.owner === ws.data.user?.id && game.players.length >= 3) {
       const round = getRound(game.categories, game.prevQs);
       const newGame = {
@@ -262,10 +283,10 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
     }
   }
 
-  if (data.type === 'submit') {
+  if (data.type === "submit") {
     const { code, roast } = data;
     const game = findGame(code);
-    
+
     if (game) {
       if (!game.rounds[game.currentRound]) {
         game.rounds[game.currentRound] = [];
@@ -277,7 +298,7 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
 
       if (!hasSubmitted) {
         game.rounds[game.currentRound].push({
-          userid: ws.data.user!.id,
+          userid: ws.data.user?.id,
           roast,
           votes: 0,
         });
@@ -286,10 +307,10 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
     }
   }
 
-  if (data.type === 'vote') {
+  if (data.type === "vote") {
     const { code, vote } = data;
     const game = findGame(code);
-    
+
     if (game) {
       if (!game.votes[game.currentRound]) {
         game.votes[game.currentRound] = [];
@@ -301,7 +322,7 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
 
       if (!hasVoted) {
         game.votes[game.currentRound].push({
-          voter: ws.data.user!.id,
+          voter: ws.data.user?.id,
           vote: vote,
         });
         updateGame(code, game);
@@ -328,15 +349,15 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
     }
   }
 
-  if (data.type === 'next-round') {
+  if (data.type === "next-round") {
     const code = data.code;
     const game = findGame(code);
-    
+
     if (game && game.owner === ws.data.user?.id) {
       const nextRound = game.currentRound + 1;
 
       if (nextRound > 5) {
-        const winners = game.players.sort((a, b) => {
+        const _winners = game.players.sort((a, b) => {
           return -(a.score - b.score);
         });
       } else {
@@ -352,7 +373,7 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
     }
   }
 
-  if (data.type === 'end') {
+  if (data.type === "end") {
     const code = data.code;
     const gameIndex = state.games.findIndex((g) => g.code === code);
     const gs = [...state.games];
@@ -361,14 +382,14 @@ export function setupGameWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
     setSockets({ ...state.sockets, [socketId]: null });
   }
 
-  if (data.type === 'remove-player') {
+  if (data.type === "remove-player") {
     const { code, id } = data;
     const game = findGame(code);
 
     if (game && game.owner === ws.data.user?.id) {
       const i = game.players.findIndex((p) => p.id === id);
       const playerToRemove = game.players[i];
-      if (playerToRemove && playerToRemove.socketId) {
+      if (playerToRemove?.socketId) {
         const newPlayers = [...game.players];
         newPlayers.splice(i, 1);
         game.players = newPlayers;

@@ -1,7 +1,7 @@
 import { useState } from "react";
+import PrimaryButton from "../../components/Button/Primary";
 import axios from "../../utils/axios";
 import { useUserStore } from "../../utils/userStore";
-import PrimaryButton from "../../components/Button/Primary";
 
 export default function Content() {
   const [userEmail, setUserEmail] = useState("");
@@ -13,9 +13,13 @@ export default function Content() {
   return (
     <div className="flex flex-col items-center justify-center h-[90vh] w-full bg-[#f4f4f4]">
       <div className="h-[80vh] rounded-[10px] bg-white flex flex-col justify-between">
-        <div className="text-[32px] font-extrabold m-10 mr-[216px] text-primary">Login to an account</div>
+        <div className="text-[32px] font-extrabold m-10 mr-[216px] text-primary">
+          Login to an account
+        </div>
         <div className="flex flex-col items-center justify-center p-10">
-          <div className="w-full text-[#4a4a4a] font-semibold text-lg mt-3">Email</div>
+          <div className="w-full text-[#4a4a4a] font-semibold text-lg mt-3">
+            Email
+          </div>
           <input
             className="w-full h-16 rounded-[10px] box-border my-1 border-[3px] border-primary/35 px-4 text-lg font-medium text-[#4a4a4a] focus:outline-none focus:border-primary"
             value={userEmail}
@@ -24,7 +28,9 @@ export default function Content() {
             }}
             type="email"
           />
-          <div className="w-full text-[#4a4a4a] font-semibold text-lg mt-3">Password</div>
+          <div className="w-full text-[#4a4a4a] font-semibold text-lg mt-3">
+            Password
+          </div>
           <input
             className="w-full h-16 rounded-[10px] box-border my-1 border-[3px] border-primary/35 px-4 text-lg font-medium text-[#4a4a4a] focus:outline-none focus:border-primary"
             value={userPass}
@@ -54,7 +60,9 @@ export default function Content() {
           >
             Login
           </PrimaryButton>
-          <div className="text-primary text-sm font-semibold mt-4 ml-1 self-start">{error}</div>
+          <div className="text-primary text-sm font-semibold mt-4 ml-1 self-start">
+            {error}
+          </div>
         </div>
       </div>
     </div>

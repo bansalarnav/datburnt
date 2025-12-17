@@ -4,11 +4,11 @@ export interface CookieConfig {
   httpOnly: boolean;
   maxAge: number;
   secure?: boolean;
-  sameSite?: 'none' | 'lax' | 'strict';
+  sameSite?: "none" | "lax" | "strict";
 }
 
 export interface RemoveCookieConfig {
-  sameSite?: 'none' | 'lax' | 'strict';
+  sameSite?: "none" | "lax" | "strict";
   secure?: boolean;
 }
 
@@ -20,17 +20,17 @@ export interface Config {
 }
 
 const config: Config = {
-  PORT: parseInt(env('PORT', '4000')),
+  PORT: parseInt(env("PORT", "4000"), 10),
   DATABASE_URL: env("DATABASE_URL"),
-  allowedOrigins: [env('FRONTEND_URL', 'http://localhost:3000')],
+  allowedOrigins: [env("FRONTEND_URL", "http://localhost:3000")],
   cookieConfig:
-    process.env.NODE_ENV === 'production'
+    process.env.NODE_ENV === "production"
       ? {
-        httpOnly: true,
-        maxAge: 15552000000,
-        secure: true,
-        sameSite: 'none',
-      }
+          httpOnly: true,
+          maxAge: 15552000000,
+          secure: true,
+          sameSite: "none",
+        }
       : { httpOnly: true, maxAge: 15552000000 },
 };
 

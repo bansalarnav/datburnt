@@ -1,6 +1,7 @@
-import { ChangeEvent, InputHTMLAttributes } from "react";
+import type { ChangeEvent, InputHTMLAttributes } from "react";
 
-interface TagTextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+interface TagTextFieldProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
@@ -12,7 +13,7 @@ interface TagTextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 
 export default function TagTextField({
   placeholder,
-  className = '',
+  className = "",
   disabled,
   value,
   onChange,

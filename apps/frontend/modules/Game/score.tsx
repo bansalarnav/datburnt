@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import useSound from "use-sound";
 import PrimaryButton from "../../components/Button/Primary";
 import { useUserStore } from "../../utils/userStore";
-import useSound from "use-sound";
 
 const colors = [
   "#DA8C18",
@@ -51,7 +51,10 @@ const Score = ({ scores, owner, nextRound, currentRound }: ScoreProps) => {
   return (
     <div className="w-screen h-[80vh] flex flex-col items-center justify-center mb-20">
       <h1 className="text-grey-700 font-extrabold text-4xl">Scorecheck</h1>
-      <div className="w-full h-full flex-1 mb-[35px] flex flex-col items-center justify-end" ref={containerRef}>
+      <div
+        className="w-full h-full flex-1 mb-[35px] flex flex-col items-center justify-end"
+        ref={containerRef}
+      >
         <div className="flex-1 w-[90%] flex justify-around mt-5">
           {scores.map((score, i) => {
             return (
@@ -101,18 +104,24 @@ const Score = ({ scores, owner, nextRound, currentRound }: ScoreProps) => {
                   justifyContent: "center",
                 }}
               >
-                <img src={s.avatarUrl} alt="Player avatar" className="h-[60px] w-[60px] rounded-full border-[5px] border-primary" />
+                <img
+                  src={s.avatarUrl}
+                  alt="Player avatar"
+                  className="h-[60px] w-[60px] rounded-full border-[5px] border-primary"
+                />
               </div>
             );
           })}
         </div>
       </div>
       <div className="flex flex-row items-center justify-between fixed bottom-0 left-0 w-screen h-20 bg-white py-5">
-        <div className="font-semibold text-grey-800 text-xl ml-[3vw]">The game&apos;s not over yet ;)</div>
+        <div className="font-semibold text-grey-800 text-xl ml-[3vw]">
+          The game&apos;s not over yet ;)
+        </div>
         <div className="mr-[2vw]">
           {user && user._id === owner ? (
             <PrimaryButton onClick={() => nextRound()}>
-              {currentRound == 5 ? "View Results!" : "Next Round"}
+              {currentRound === 5 ? "View Results!" : "Next Round"}
             </PrimaryButton>
           ) : null}
         </div>

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import PrimaryButton from "../../components/Button/Primary";
+import { useEffect, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import useSound from "use-sound";
+import PrimaryButton from "../../components/Button/Primary";
 
 interface RoastDetails {
   image?: string;
@@ -17,9 +17,7 @@ interface RoastProps {
 
 const Roast = ({ round, details, submitRoast }: RoastProps) => {
   const [countdown, setCountdown] = useState(3);
-  const [playCountdown, { stop }] = useSound(
-    "/sounds/countdown.mp3"
-  );
+  const [playCountdown, { stop }] = useSound("/sounds/countdown.mp3");
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -53,7 +51,7 @@ const Roast = ({ round, details, submitRoast }: RoastProps) => {
         <RoastForm round={round} details={details} submitRoast={submitRoast} />
       ) : (
         <div className="font-bold text-[90px] text-primary">
-          {countdown == 0 ? "Go!" : countdown}
+          {countdown === 0 ? "Go!" : countdown}
         </div>
       )}
     </div>
@@ -77,7 +75,7 @@ const RoastForm = ({ round, details, submitRoast }: RoastFormProps) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (countdown == 0) {
+      if (countdown === 0) {
         clearInterval(interval);
         if (!submitted) {
           const interval2 = setInterval(() => {
@@ -87,7 +85,7 @@ const RoastForm = ({ round, details, submitRoast }: RoastFormProps) => {
           }, 2000);
         }
       } else {
-        if (countdown == 11) {
+        if (countdown === 11) {
           if (!submitted) {
             playTicking();
           }
@@ -97,7 +95,7 @@ const RoastForm = ({ round, details, submitRoast }: RoastFormProps) => {
           stopTicking();
         }
 
-        if (countdown == 1) {
+        if (countdown === 1) {
           stopTicking();
           playOof();
         }
@@ -111,7 +109,15 @@ const RoastForm = ({ round, details, submitRoast }: RoastFormProps) => {
       stopTicking();
       stopOof();
     };
-  }, [countdown, submitted, playTicking, stopTicking, playOof, stopOof, submitRoast]);
+  }, [
+    countdown,
+    submitted,
+    playTicking,
+    stopTicking,
+    playOof,
+    stopOof,
+    submitRoast,
+  ]);
 
   const handleSubmit = () => {
     if (myRoast.length > 0) {
@@ -125,15 +131,27 @@ const RoastForm = ({ round, details, submitRoast }: RoastFormProps) => {
   return (
     <div>
       <div className="w-screen h-full flex flex-col items-center justify-center">
-        <h1 className="text-[#4e4e4e] font-extrabold text-[32px] mb-[4vh]">Round {round}</h1>
+        <h1 className="text-[#4e4e4e] font-extrabold text-[32px] mb-[4vh]">
+          Round {round}
+        </h1>
         <div>
-          <img src={details.image} className="h-[40vh] object-cover rounded-[14px]" alt="Roast target" />
-          <p className="text-base font-semibold text-[#7d7d7d] m-0">Category: {details.category}</p>
+          <img
+            src={details.image}
+            className="h-[40vh] object-cover rounded-[14px]"
+            alt="Roast target"
+          />
+          <p className="text-base font-semibold text-[#7d7d7d] m-0">
+            Category: {details.category}
+          </p>
         </div>
         {countdown <= 0 && !submitted ? (
-          <div className="text-primary font-extrabold text-[32px] mt-[4vh]">Time's Up!</div>
+          <div className="text-primary font-extrabold text-[32px] mt-[4vh]">
+            Time's Up!
+          </div>
         ) : submitted ? (
-          <div className="text-primary font-extrabold text-[32px] mt-[4vh]">I bet that one hurt</div>
+          <div className="text-primary font-extrabold text-[32px] mt-[4vh]">
+            I bet that one hurt
+          </div>
         ) : (
           <form
             className="flex items-center justify-center w-full mt-[4vh]"
@@ -148,9 +166,7 @@ const RoastForm = ({ round, details, submitRoast }: RoastFormProps) => {
               value={myRoast}
               onChange={(e) => setMyRoast(e.target.value)}
             />
-            <PrimaryButton onClick={handleSubmit}>
-              Roast!
-            </PrimaryButton>
+            <PrimaryButton onClick={handleSubmit}>Roast!</PrimaryButton>
           </form>
         )}
       </div>

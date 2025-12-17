@@ -11,7 +11,9 @@ const Loader = ({ center }: LoaderProps) => {
     );
   }
 
-  return <div className="inline-block border-4 border-primary border-l-transparent rounded-full w-[30px] h-[30px] animate-spin" />;
+  return (
+    <div className="inline-block border-4 border-primary border-l-transparent rounded-full w-[30px] h-[30px] animate-spin" />
+  );
 };
 
 export default Loader;

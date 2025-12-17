@@ -1,7 +1,7 @@
 import Head from "next/head";
-import Header from "../Header";
 import { useRouter } from "next/router";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
+import Header from "../Header";
 
 interface LayoutProps {
   children: ReactNode;
@@ -24,7 +24,7 @@ export default function Layout({
   return (
     <>
       <Head>
-        <title>{page.title + ` • datburnttt`}</title>
+        <title>{`${page.title} • datburnttt`}</title>
         <link rel="shortcut icon" href="/icons/logo.png" />
         <meta name="title" content="datburnt - keep some ice handy" />
         <meta
@@ -39,10 +39,7 @@ export default function Layout({
           property="og:description"
           content="A classic roast battle. Have fun with your friends and roast famous personalities!"
         />
-        <meta
-          property="og:image"
-          content="https://datburnt.com/banner.png"
-        />
+        <meta property="og:image" content="https://datburnt.com/banner.png" />
 
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://datburnt.com/" />
@@ -59,26 +56,24 @@ export default function Layout({
           content="https://datburnt.com/banner.png"
         />
       </Head>
-      <>
-        <div
-          className="m-0 p-0 w-full h-[90vh] flex flex-col items-center pt-[10vh] bg-[#f4f4f4]"
-          style={{
-            background: `${
-              router.pathname === "/"
-                ? "linear-gradient(#e93131 0%, #680e0e 100%)"
-                : ""
-            }`,
-          }}
-        >
-          {!page.hideHeader && showNav && (
-            <Header
-              type={`${router.pathname === "/" ? "light" : "dark"}`}
-              code={isGame ? (router.query.code as string) : null}
-            />
-          )}
-          <div className="w-full">{children}</div>
-        </div>
-      </>
+      <div
+        className="m-0 p-0 w-full h-[90vh] flex flex-col items-center pt-[10vh] bg-[#f4f4f4]"
+        style={{
+          background: `${
+            router.pathname === "/"
+              ? "linear-gradient(#e93131 0%, #680e0e 100%)"
+              : ""
+          }`,
+        }}
+      >
+        {!page.hideHeader && showNav && (
+          <Header
+            type={`${router.pathname === "/" ? "light" : "dark"}`}
+            code={isGame ? (router.query.code as string) : null}
+          />
+        )}
+        <div className="w-full">{children}</div>
+      </div>
       <div id="popupContainer"></div>
     </>
   );

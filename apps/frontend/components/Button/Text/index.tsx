@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 interface TextButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -9,7 +9,7 @@ interface TextButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function TextButton({
   children,
-  className = '',
+  className = "",
   click,
   loading,
   ...props
@@ -29,7 +29,7 @@ export default function TextButton({
       onClick={click}
       {...props}
     >
-      {loading ? 'Loading...' : children}
+      {loading ? "Loading..." : children}
     </button>
   );
 }

@@ -1,22 +1,27 @@
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import PrimaryButton from '../../components/Button/Primary';
-import TextButton from '../../components/Button/Text';
-import Barbeque from '../../public/icons/barbeque.png';
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import Barbeque from "../../public/icons/barbeque.png";
 
 export default function Content() {
-  const router = useRouter();
+  const _router = useRouter();
 
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [registerLoading, setRegisterLoading] = useState(false);
+  const [_loginLoading, _setLoginLoading] = useState(false);
+  const [_registerLoading, _setRegisterLoading] = useState(false);
   return (
     <div className="w-full h-[90vh] flex flex-col justify-center items-center">
       <div className="flex justify-center items-center w-[72vw] mb-[8vh]">
         <div className="mr-8">
           <h1 className="text-[56px] font-extrabold text-white mb-12">
-            You might need some <span className="bg-gradient-to-r from-[#a4b4ff] to-[#3f3cd8] bg-clip-text text-transparent">Ice</span> because
-            <span className="bg-gradient-to-r from-[#e5af23] to-[#f2411a] bg-clip-text text-transparent"> datburnttt</span>
+            You might need some{" "}
+            <span className="bg-gradient-to-r from-[#a4b4ff] to-[#3f3cd8] bg-clip-text text-transparent">
+              Ice
+            </span>{" "}
+            because
+            <span className="bg-gradient-to-r from-[#e5af23] to-[#f2411a] bg-clip-text text-transparent">
+              {" "}
+              datburnttt
+            </span>
           </h1>
           <p className="text-2xl font-semibold text-[#bdbdbd]">
             You just might be a barbeque..... who knows

@@ -1,3 +1,3 @@
-import { Elysia } from 'elysia';
+import { Elysia } from "elysia";
 
-export const websocketRoutes = new Elysia({ prefix: '/ws' }) 
+export const websocketRoutes = new Elysia({ prefix: "/ws" });

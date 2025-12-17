@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { useUserStore } from "../../utils/userStore";
 import useSound from "use-sound";
+import { useUserStore } from "../../utils/userStore";
 
 interface Candidate {
   userid: string;
@@ -38,12 +38,12 @@ const Voting = ({ details, voteCandidates, submitVote }: VotingProps) => {
 
     const c: Candidate[] = [];
     voteCandidates.forEach((can) => {
-      if (can.roast.replaceAll(" ", "").length > 0 && can.userid != user._id) {
+      if (can.roast.replaceAll(" ", "").length > 0 && can.userid !== user._id) {
         c.push(can);
       }
     });
     setCandidates(c);
-    
+
     if (c.length < 2) {
       if (!voted) {
         setTimeout(() => {
@@ -75,7 +75,7 @@ const Voting = ({ details, voteCandidates, submitVote }: VotingProps) => {
             }, 2000);
           }
         } else {
-          if (countdown == 11) {
+          if (countdown === 11) {
             if (!voted) {
               playTicking();
             }
@@ -85,7 +85,7 @@ const Voting = ({ details, voteCandidates, submitVote }: VotingProps) => {
             stopTicking();
           }
 
-          if (countdown == 1) {
+          if (countdown === 1) {
             stopTicking();
             playOof();
           }
@@ -96,7 +96,16 @@ const Voting = ({ details, voteCandidates, submitVote }: VotingProps) => {
 
       return () => clearInterval(interval);
     }
-  }, [countdown, startCountdown, voted, playTicking, stopTicking, playOof, stopOof, submitVote]);
+  }, [
+    countdown,
+    startCountdown,
+    voted,
+    playTicking,
+    stopTicking,
+    playOof,
+    stopOof,
+    submitVote,
+  ]);
 
   return (
     <div className="w-screen h-full flex flex-col items-center justify-center">
@@ -106,8 +115,14 @@ const Voting = ({ details, voteCandidates, submitVote }: VotingProps) => {
       </div>
       <div className="flex flex-row justify-between w-[80vw] h-full mt-[2vh] pb-20">
         <div className="flex flex-col">
-          <img src={details.image} className="rounded-[14px] h-[40vh]" alt="Voting target" />
-          <span className="text-base font-semibold text-[#7d7d7d] m-0">Category: {details.category}</span>
+          <img
+            src={details.image}
+            className="rounded-[14px] h-[40vh]"
+            alt="Voting target"
+          />
+          <span className="text-base font-semibold text-[#7d7d7d] m-0">
+            Category: {details.category}
+          </span>
         </div>
         <div className="ml-[10vw] pb-20 flex w-[60vw] flex-wrap h-min">
           {candidates.length < 2 ? (

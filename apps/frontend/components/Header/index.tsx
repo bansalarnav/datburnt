@@ -1,12 +1,11 @@
-import Image from 'next/image';
-
-import Logo from '../../public/icons/logo.png';
-import PrimaryButton from '../Button/Primary';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import Logo from "../../public/icons/logo.png";
+import PrimaryButton from "../Button/Primary";
 
 interface HeaderProps {
-  type?: 'light' | 'dark';
+  type?: "light" | "dark";
   code?: string | null;
 }
 
@@ -15,8 +14,8 @@ export default function Header(props: HeaderProps) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
+    if (typeof window !== "undefined") {
+      const _hostname = window.location.hostname;
     }
   }, []);
 
@@ -25,25 +24,25 @@ export default function Header(props: HeaderProps) {
       <div className="flex justify-center items-center">
         <Image src={Logo} height={50} width={50} alt="Logo" />
         <h1
-          style={{ color: `${props.type == 'light' ? '#ffffff' : ''}` }}
+          style={{ color: `${props.type === "light" ? "#ffffff" : ""}` }}
           className="text-2xl font-extrabold ml-6 text-[#4a4a4a] italic"
         >
           datburnttt
         </h1>
       </div>
       <div className="flex items-center">
-        {router.pathname === '/home' ? (
+        {router.pathname === "/home" ? (
           <>Play</>
-        ) : router.pathname === '/' ? (
+        ) : router.pathname === "/" ? (
           <div>
             <PrimaryButton
-              style={{ marginRight: '2rem' }}
+              style={{ marginRight: "2rem" }}
               onClick={() => {
                 setLoading(true);
-                if (router.pathname === '/register') {
+                if (router.pathname === "/register") {
                   return setLoading(false);
                 }
-                router.push('/register');
+                router.push("/register");
               }}
               loading={loading}
             >
@@ -52,24 +51,24 @@ export default function Header(props: HeaderProps) {
             <PrimaryButton
               onClick={() => {
                 setLoading(true);
-                if (router.pathname === '/login') {
+                if (router.pathname === "/login") {
                   return setLoading(false);
                 }
-                router.push('/login');
+                router.push("/login");
               }}
               loading={loading}
             >
               Login
             </PrimaryButton>
           </div>
-        ) : router.pathname === '/login' || router.pathname === '/register' ? (
+        ) : router.pathname === "/login" || router.pathname === "/register" ? (
           <PrimaryButton
             onClick={() => {
               setLoading(true);
-              if (router.pathname === '/register') {
+              if (router.pathname === "/register") {
                 return setLoading(false);
               }
-              router.push('/register');
+              router.push("/register");
             }}
             loading={loading}
           >

@@ -1,8 +1,8 @@
-import { useState, useEffect, ReactNode } from "react";
-import Loader from "../Loader";
-import axios from "../../utils/axios";
 import { useRouter } from "next/router";
+import { type ReactNode, useEffect, useState } from "react";
+import axios from "../../utils/axios";
 import { useUserStore } from "../../utils/userStore";
+import Loader from "../Loader";
 
 interface ProtectedRouteProps {
   children: ReactNode;

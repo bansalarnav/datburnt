@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import Loader from "../../components/Loader";
-import io, { Socket } from "socket.io-client";
-import { useUserStore } from "../../utils/userStore";
 import { useRouter } from "next/router";
-import WaitingRoom from "./waiting";
-import Roast from "./roast";
-import Voting from "./voting";
-import Score from "./score";
+import { useEffect, useState } from "react";
+import io, { type Socket } from "socket.io-client";
+import Loader from "../../components/Loader";
+import { useUserStore } from "../../utils/userStore";
 import Results from "./result";
+import Roast from "./roast";
+import Score from "./score";
+import Voting from "./voting";
+import WaitingRoom from "./waiting";
 
 let socket: Socket | null = null;
 
@@ -136,7 +136,7 @@ const GameContent = () => {
             <div className="flex h-[80vh] w-full justify-center items-center text-[34px] font-bold text-primary">
               {errorMsg}
             </div>
-          ) : currentRound != 0 ? (
+          ) : currentRound !== 0 ? (
             !showVoting && !showScores && !showResult ? (
               <Roast
                 details={roundDetails}

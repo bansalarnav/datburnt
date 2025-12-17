@@ -1,5 +1,5 @@
-import Loader from '../Loader';
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from "react";
+import Loader from "../Loader";
 
 interface PrimaryButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -10,7 +10,7 @@ interface PrimaryButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export default function PrimaryButton({
   children,
-  className = '',
+  className = "",
   click,
   loading,
   ...props

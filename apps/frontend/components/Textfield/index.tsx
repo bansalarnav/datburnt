@@ -1,6 +1,7 @@
-import { ChangeEvent, InputHTMLAttributes } from "react";
+import type { ChangeEvent, InputHTMLAttributes } from "react";
 
-interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+interface TextFieldProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
@@ -11,7 +12,7 @@ interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'on
 
 export default function TextField({
   placeholder,
-  className = '',
+  className = "",
   disabled,
   value,
   onChange,

@@ -1,23 +1,23 @@
-import { useState, useEffect, useRef } from "react";
-import Loader from "../../components/Loader";
-import io, { Socket } from "socket.io-client";
-import { useUserStore } from "../../utils/userStore";
-import { Popup, useOnClickOutside } from "../../components/Popup";
-import PrimaryButton from "../../components/Button/Primary";
-import Slider from "react-input-slider";
+import Image from "next/image";
 import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import Slider from "react-input-slider";
+import io, { type Socket } from "socket.io-client";
+import PrimaryButton from "../../components/Button/Primary";
+import Loader from "../../components/Loader";
+import { Popup, useOnClickOutside } from "../../components/Popup";
 // ============================================
 // HOP SERVICE DISABLED - Service no longer exists
 // ============================================
 // import { hop } from "@onehop/client";
 // import { useReadChannelState } from "@onehop/react";
 import axios from "../../utils/axios";
-import Image from "next/image";
+import { useUserStore } from "../../utils/userStore";
 
 // const channelId = "online_users";
 
-import PublicIcon from "../../public/icons/public.svg";
 import PrivateIcon from "../../public/icons/private.svg";
+import PublicIcon from "../../public/icons/public.svg";
 
 interface Game {
   code: string;
@@ -44,8 +44,8 @@ export default function Content() {
   // HOP SERVICE DISABLED - Using dummy data instead
   // ============================================
   // const { state } = useReadChannelState(channelId);
-  const state = null; // Dummy state
-  const [onlineUsers, setOnlineUsers] = useState<any[]>([]);
+  const _state = null; // Dummy state
+  const [_onlineUsers, _setOnlineUsers] = useState<any[]>([]);
   const router = useRouter();
 
   const popupRef = useRef<HTMLDivElement>(null);
@@ -58,7 +58,7 @@ export default function Content() {
     "Celebs",
     "Companies",
   ]);
-  const [loading, setLoading] = useState(false);
+  const [loading, _setLoading] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
   const { user } = useUserStore();
   const [popupState, setPopupState] = useState(false);
@@ -79,7 +79,7 @@ export default function Content() {
   useOnClickOutside(popupRef, () => {
     setPopupState(false);
   });
-  
+
   useOnClickOutside(popupRef2, () => {
     setPopupState2(false);
   });
@@ -110,7 +110,7 @@ export default function Content() {
       socket?.disconnect();
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [socket, user]);
 
   useEffect(() => {
     // ============================================
@@ -128,10 +128,10 @@ export default function Content() {
     //     )
     //   );
     // }
-    
+
     // Set empty array for online friends (no hop service)
     setOnlineFriends([]);
-  }, [state, friends]);
+  }, []);
 
   useEffect(() => {
     if (socket) {
@@ -169,12 +169,17 @@ export default function Content() {
           <div>
             {/* Header */}
             <div className="flex justify-between mt-16 mb-4 items-center">
-              <h1 className="text-[32px] font-extrabold text-[#4e4e4e] m-0">Play Now!</h1>
+              <h1 className="text-[32px] font-extrabold text-[#4e4e4e] m-0">
+                Play Now!
+              </h1>
               <div
                 className="text-primary text-[28px] flex items-center font-medium cursor-pointer select-none justify-center"
                 onClick={() => setPopupState(true)}
               >
-                <span className="font-semibold text-xl mr-2.5">Create New Room </span>+
+                <span className="font-semibold text-xl mr-2.5">
+                  Create New Room{" "}
+                </span>
+                +
               </div>
             </div>
 
@@ -213,7 +218,9 @@ export default function Content() {
             </div>
 
             {/* Friends Section */}
-            <div className="text-[32px] font-extrabold text-[#4e4e4e] m-0 mt-12">Friends</div>
+            <div className="text-[32px] font-extrabold text-[#4e4e4e] m-0 mt-12">
+              Friends
+            </div>
             <div className="flex flex-wrap mt-4">
               <div
                 className="h-40 flex items-center flex-col rounded-[14px] cursor-pointer select-none justify-start w-[120px]"
@@ -229,7 +236,10 @@ export default function Content() {
                 </div>
               </div>
               {friends.map((friend, idx) => (
-                <div key={idx} className="h-40 flex items-center flex-col rounded-[14px] cursor-pointer select-none justify-start w-[120px] ml-4">
+                <div
+                  key={idx}
+                  className="h-40 flex items-center flex-col rounded-[14px] cursor-pointer select-none justify-start w-[120px] ml-4"
+                >
                   <div
                     className="flex justify-center items-center rounded-full overflow-hidden"
                     style={{
@@ -258,15 +268,20 @@ export default function Content() {
             </div>
 
             {/* Public Rooms */}
-            <div className="text-[32px] font-extrabold text-[#4e4e4e] m-0 mt-12">Public Rooms</div>
+            <div className="text-[32px] font-extrabold text-[#4e4e4e] m-0 mt-12">
+              Public Rooms
+            </div>
             <div className="mt-4 mb-[8vh] flex w-full flex-wrap">
               {games.map((game, idx) => (
-                <div key={idx} className="flex justify-between max-w-[20vw] min-w-[16vw] p-6 bg-white rounded-[14px] mr-5 mb-5">
+                <div
+                  key={idx}
+                  className="flex justify-between max-w-[20vw] min-w-[16vw] p-6 bg-white rounded-[14px] mr-5 mb-5"
+                >
                   <div className="mt-1 mr-6 pr-8 mb-6">
-                    <div className="text-[#4e4e4e] font-semibold text-xl">{game.code}</div>
-                    <div className="mt-2">
-                      {game.players.length} Players
+                    <div className="text-[#4e4e4e] font-semibold text-xl">
+                      {game.code}
                     </div>
+                    <div className="mt-2">{game.players.length} Players</div>
                   </div>
                   <button
                     className="text-primary border-none text-sm font-semibold rounded-[10px] py-2.5 px-10 h-min cursor-pointer transition-all duration-200 bg-primary/20 hover:bg-primary/30"
@@ -289,15 +304,21 @@ export default function Content() {
             className="flex flex-col justify-between min-h-[69vh]"
           >
             <div>
-              <h2 className="m-0 mb-2.5 text-[28px] font-extrabold text-primary">Create New Game</h2>
-              
+              <h2 className="m-0 mb-2.5 text-[28px] font-extrabold text-primary">
+                Create New Game
+              </h2>
+
               {/* Visibility */}
               <div className="mt-7">
-                <div className="m-0 text-lg font-bold text-[#868686]">Visibility</div>
+                <div className="m-0 text-lg font-bold text-[#868686]">
+                  Visibility
+                </div>
                 <div className="h-10 w-[60%] bg-primary/20 rounded-[10px] ml-[50%] -translate-x-1/2 flex mt-5">
                   <div
                     className={`w-1/2 h-full cursor-pointer flex justify-center items-center font-semibold text-primary ${
-                      visibility === "public" ? "bg-primary text-white rounded-[10px]" : ""
+                      visibility === "public"
+                        ? "bg-primary text-white rounded-[10px]"
+                        : ""
                     }`}
                     onClick={() => setVisibility("public")}
                   >
@@ -306,7 +327,9 @@ export default function Content() {
                   </div>
                   <div
                     className={`w-1/2 h-full cursor-pointer flex justify-center items-center font-semibold text-primary ${
-                      visibility === "private" ? "bg-primary text-white rounded-[10px]" : ""
+                      visibility === "private"
+                        ? "bg-primary text-white rounded-[10px]"
+                        : ""
                     }`}
                     onClick={() => setVisibility("private")}
                   >
@@ -349,7 +372,9 @@ export default function Content() {
 
               {/* Categories */}
               <div className="mt-7">
-                <div className="m-0 text-lg font-bold text-[#868686]">Categories</div>
+                <div className="m-0 text-lg font-bold text-[#868686]">
+                  Categories
+                </div>
                 <div className="my-4 mb-16 flex justify-between flex-col">
                   <div className="flex mb-2.5">
                     <div
@@ -447,7 +472,9 @@ export default function Content() {
             center
             className="flex flex-col justify-between items-center"
           >
-            <h2 className="m-0 mb-2.5 text-[28px] font-extrabold text-primary self-start">Add Friend</h2>
+            <h2 className="m-0 mb-2.5 text-[28px] font-extrabold text-primary self-start">
+              Add Friend
+            </h2>
             <div>
               <input
                 className="border-[3px] border-[#d9d9d9] text-base text-[#797979] flex-grow-[0.5] py-3 px-5 pl-8 translate-y-1 mr-4 font-medium rounded-[10px] h-[26px] focus:outline-none"

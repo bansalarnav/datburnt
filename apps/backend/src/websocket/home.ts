@@ -1,22 +1,25 @@
-import { ServerWebSocket } from 'bun';
-import makeid from '../utils/makeid';
-import state, { setGames } from '../state';
-import { parse } from 'cookie';
-import jwt from 'jsonwebtoken';
-import UserModel, { type User } from '../models/User';
+import type { ServerWebSocket } from "bun";
+import { parse } from "cookie";
+import jwt from "jsonwebtoken";
+import UserModel, { type User } from "../models/User";
+import state, { setGames } from "../state";
+import makeid from "../utils/makeid";
 
 interface WebSocketData {
   user?: User;
 }
 
 function sortGames(games: typeof state.games) {
-  return games.filter(game => !game.private && !game.started);
+  return games.filter((game) => !game.private && !game.started);
 }
 
-export function setupHomeWebSocket(ws: ServerWebSocket<WebSocketData>, message: string) {
+export function setupHomeWebSocket(
+  ws: ServerWebSocket<WebSocketData>,
+  message: string
+) {
   const data = JSON.parse(message);
-  
-  if (data.type === 'newgame') {
+
+  if (data.type === "newgame") {
     const code = makeid(6);
     const newGame = {
       ...data.payload,
@@ -26,26 +29,30 @@ export function setupHomeWebSocket(ws: ServerWebSocket<WebSocketData>, message: 
       rounds: [],
       votes: [],
       code,
-      owner: ws.data.user?.id || '',
+      owner: ws.data.user?.id || "",
       prevQs: [],
     };
 
     setGames([...state.games, newGame]);
-    
-    ws.send(JSON.stringify({ type: 'games', games: sortGames(state.games) }));
-    ws.send(JSON.stringify({ type: 'redirect', code }));
-    
+
+    ws.send(JSON.stringify({ type: "games", games: sortGames(state.games) }));
+    ws.send(JSON.stringify({ type: "redirect", code }));
+
     console.log(`Creating new game ${code}`);
-    console.log('No. of Rooms:', state.games.length);
+    console.log("No. of Rooms:", state.games.length);
   }
 }
 
-export function setupHomeWebSocketConnection(ws: ServerWebSocket<WebSocketData>) {
-  ws.send(JSON.stringify({ type: 'games', games: sortGames(state.games) }));
+export function setupHomeWebSocketConnection(
+  ws: ServerWebSocket<WebSocketData>
+) {
+  ws.send(JSON.stringify({ type: "games", games: sortGames(state.games) }));
 }
 
-export async function authenticateWebSocket(headers: Headers): Promise<User | null> {
-  const cookieHeader = headers.get('cookie');
+export async function authenticateWebSocket(
+  headers: Headers
+): Promise<User | null> {
+  const cookieHeader = headers.get("cookie");
   if (!cookieHeader) return null;
 
   const cookies = parse(cookieHeader);
@@ -57,7 +64,7 @@ export async function authenticateWebSocket(headers: Headers): Promise<User | nu
     const decoded = jwt.verify(token, process.env.JWT_KEY!) as { id: string };
     const user = await UserModel.findOne({ id: decoded.id });
     return user;
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
