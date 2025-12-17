@@ -1,3 +1,5 @@
+import { env } from "./utils/env";
+
 export interface CookieConfig {
   httpOnly: boolean;
   maxAge: number;
@@ -15,16 +17,12 @@ export interface Config {
   DATABASE_URL: string;
   allowedOrigins: string[];
   cookieConfig: CookieConfig;
-  removeCookieConfig: RemoveCookieConfig;
 }
 
 const config: Config = {
-  PORT: parseInt(process.env.PORT || '4000'),
-  DATABASE_URL: process.env.DATABASE_URL || '',
-  allowedOrigins:
-    process.env.NODE_ENV === 'production'
-      ? ['https://minet-metaverse.vercel.app']
-      : ['http://localhost:3001'],
+  PORT: parseInt(env('PORT', '4000')),
+  DATABASE_URL: env("DATABASE_URL"),
+  allowedOrigins: [env('FRONTEND_URL', 'http://localhost:3000')],
   cookieConfig:
     process.env.NODE_ENV === 'production'
       ? {
@@ -34,10 +32,6 @@ const config: Config = {
         sameSite: 'none',
       }
       : { httpOnly: true, maxAge: 15552000000 },
-  removeCookieConfig:
-    process.env.NODE_ENV === 'production'
-      ? { sameSite: 'none', secure: true }
-      : {},
 };
 
 export default config;

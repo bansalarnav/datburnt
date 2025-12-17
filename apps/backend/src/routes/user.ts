@@ -20,7 +20,7 @@ function randomString(length: number): string {
   return str;
 }
 
-export const authRoutes = new Elysia({ prefix: '/user' })
+export const userRoutes = new Elysia({ prefix: '/user' })
   .use(authTokenJwt)
   .post('/register', async ({ auth_token, body, cookie: { auth }, set }) => {
     try {

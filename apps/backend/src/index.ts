@@ -1,10 +1,11 @@
 import { Elysia } from 'elysia';
 import { cookie } from '@elysiajs/cookie';
 import { cors } from '@elysiajs/cors';
-import { authRoutes } from './routes/auth';
+import { userRoutes } from './routes/user';
+import { websocketRoutes } from './ws';
 import config from './config';
 
-const port = config.PORT || 4000;
+const port = config.PORT
 
 const app = new Elysia()
   .use(cookie())
@@ -24,11 +25,12 @@ const app = new Elysia()
     })
   )
   .get('/', () => 'Hare Rama')
-  .use(authRoutes)
+  .use(userRoutes)
+  .use(websocketRoutes)
   .listen(port);
 
 console.log(
-  `🦊 Elysia server is running at ${app.server?.hostname}:${app.server?.port}`
+  `Server started at ${app.server?.hostname}:${app.server?.port}`
 );
 
 console.log('Note: WebSocket functionality needs to be migrated separately.');
