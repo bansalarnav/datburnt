@@ -35,5 +35,3 @@ console.log("Note: WebSocket functionality needs to be migrated separately.");
 console.log(
   "The original Socket.io code has been converted to TypeScript in websocket/*.ts files."
 );
-
-export default app;

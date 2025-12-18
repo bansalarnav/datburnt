@@ -20,7 +20,7 @@ export interface Config {
 }
 
 const config: Config = {
-  PORT: parseInt(env("PORT", "4000"), 10),
+  PORT: parseInt(env("PORT", "8000"), 10),
   DATABASE_URL: env("DATABASE_URL"),
   allowedOrigins: [env("FRONTEND_URL", "http://localhost:3000")],
   cookieConfig:
