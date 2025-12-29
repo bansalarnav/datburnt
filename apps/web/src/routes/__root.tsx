@@ -1,9 +1,11 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-
-import Header from "../components/Header";
-
+import {
+  createRootRoute,
+  HeadContent,
+  Outlet,
+  Scripts,
+} from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRoute({
@@ -17,7 +19,7 @@ export const Route = createRootRoute({
         content: "width=device-width, initial-scale=1",
       },
       {
-        title: "TanStack Start Starter",
+        title: "Datburnt",
       },
     ],
     links: [
@@ -27,8 +29,21 @@ export const Route = createRootRoute({
       },
     ],
   }),
-
+  ssr: "data-only",
+  staleTime: Infinity,
+  shouldReload: false,
+  beforeLoad: async () => {
+    console.log("loader ran");
+    await new Promise((resolve, _reject) => {
+      setTimeout(() => {
+        resolve(true);
+      }, 2000);
+    });
+    console.log("loader finished");
+    return { name: "hello" };
+  },
   shellComponent: RootDocument,
+  component: RootComponent,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -38,7 +53,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <Header />
         {children}
         <TanStackDevtools
           config={{
@@ -54,5 +68,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function RootComponent() {
+  console.log("where is this rendered");
+  const { name } = Route.useRouteContext();
+
+  return (
+    <div>
+      <h1>This component will be rendered on the client {name}</h1>
+      <Outlet />
+    </div>
   );
 }
