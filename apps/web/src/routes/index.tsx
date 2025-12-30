@@ -1,18 +1,84 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Input } from "@/components/ui/input";
+import { PrimaryButton } from "@/components/ui/button";
+import { useUserStore } from "@/state/user";
+import { AuthModal } from "@/components/AuthModal";
 
 export const Route = createFileRoute("/")({
-  loader: () => {
-    console.log("index loader");
-  },
-  component: App,
+  component: IndexComponent,
 });
 
-function App() {
+function IndexComponent() {
+  const navigate = useNavigate();
+  const user = useUserStore((state) => state.user);
+  const [gameCode, setGameCode] = useState("");
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+
+  const handleJoinRoom = () => {
+    if (gameCode.trim().length === 6) {
+      navigate({ to: "/game/$gameId", params: { gameId: gameCode.trim() } });
+    }
+  };
+
+  const handleCreateRoom = () => {
+    // TODO: Implement create room logic
+    console.log("Create room");
+  };
+
+  const handleSignIn = () => {
+    setAuthModalOpen(true);
+  };
+
   return (
-    <div className="">
-      <Link to="/game/$roomId" params={{ roomId: "123" }}>
-        Go to /game/123
-      </Link>
-    </div>
+    <>
+      <div className="min-h-screen flex items-center justify-center bg-background p-8">
+        <div className="w-full max-w-md bg-card border border-border rounded-lg shadow-lg p-8">
+          <h1 className="text-2xl font-bold text-center mb-6">
+            Join or Create a Game
+          </h1>
+
+          <div className="space-y-4">
+            <Input
+              type="text"
+              placeholder="game code"
+              value={gameCode}
+              onChange={(e) => setGameCode(e.target.value.slice(0, 6))}
+              maxLength={6}
+              className="text-center text-lg tracking-wider uppercase"
+            />
+
+            <PrimaryButton
+              onClick={handleJoinRoom}
+              disabled={gameCode.trim().length !== 6}
+              className="w-full"
+            >
+              Join Room
+            </PrimaryButton>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-card px-4 text-muted-foreground">or</span>
+              </div>
+            </div>
+
+            {user ? (
+              <PrimaryButton onClick={handleCreateRoom} className="w-full">
+                Create Room
+              </PrimaryButton>
+            ) : (
+              <PrimaryButton onClick={handleSignIn} className="w-full">
+                Sign In to Create Room
+              </PrimaryButton>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+    </>
   );
 }

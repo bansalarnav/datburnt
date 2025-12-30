@@ -1,4 +1,5 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import type { QueryClient } from "@tanstack/react-query";
 import {
   createRootRoute,
   HeadContent,
@@ -6,7 +7,14 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import type { User } from "../state/user";
+import { AuthProvider } from "../state/user";
 import appCss from "../styles.css?url";
+import { apiClient } from "../utils/apiClient";
+
+interface RouterContext {
+  queryClient: QueryClient;
+}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -29,18 +37,27 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  ssr: "data-only",
-  staleTime: Infinity,
-  shouldReload: false,
-  beforeLoad: async () => {
-    console.log("loader ran");
-    await new Promise((resolve, _reject) => {
-      setTimeout(() => {
-        resolve(true);
-      }, 2000);
+  ssr: false,
+  beforeLoad: async ({ context }: { context: RouterContext }) => {
+    const user = await context.queryClient.fetchQuery({
+      queryKey: ["user"],
+      queryFn: async () => {
+        try {
+          const response = await apiClient.get<{
+            success: boolean;
+            user: User;
+          }>("/user/me");
+          if (response.data.success) {
+            return response.data.user;
+          }
+          return null;
+        } catch {
+          return null;
+        }
+      },
     });
-    console.log("loader finished");
-    return { name: "hello" };
+
+    return { user };
   },
   shellComponent: RootDocument,
   component: RootComponent,
@@ -72,13 +89,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  console.log("where is this rendered");
-  const { name } = Route.useRouteContext();
+  const { user } = Route.useRouteContext();
 
   return (
-    <div>
-      <h1>This component will be rendered on the client {name}</h1>
+    <AuthProvider initialUser={user}>
       <Outlet />
-    </div>
+    </AuthProvider>
   );
 }

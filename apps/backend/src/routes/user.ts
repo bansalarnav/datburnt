@@ -56,7 +56,8 @@ export const userRoutes = new Elysia({ prefix: "/user" })
           })
           .returning();
 
-        const jwtToken = auth_token.sign({ id: user.id });
+        const jwtToken = await auth_token.sign({ id: user.id });
+        console.log(jwtToken);
 
         auth.value = jwtToken;
         auth.httpOnly = config.cookieConfig.httpOnly;
@@ -65,6 +66,8 @@ export const userRoutes = new Elysia({ prefix: "/user" })
           auth.secure = config.cookieConfig.secure;
         if (config.cookieConfig.sameSite)
           auth.sameSite = config.cookieConfig.sameSite;
+        if (config.cookieConfig.domain)
+          auth.domain = config.cookieConfig.domain;
 
         return { success: true, userId: user.id };
       } catch (_e) {
@@ -84,7 +87,7 @@ export const userRoutes = new Elysia({ prefix: "/user" })
     async ({
       auth_token,
       body: { email, password },
-      cookie: { token: auth },
+      cookie: { auth },
       set,
     }) => {
       try {
@@ -103,7 +106,7 @@ export const userRoutes = new Elysia({ prefix: "/user" })
         const match = await verifyPassword(password, user.password);
         if (!match) return { success: false, message: "Invalid Credentials" };
 
-        const jwtToken = auth_token.sign({ id: user.id });
+        const jwtToken = await auth_token.sign({ id: user.id });
 
         const { password: _, ...userWithoutPassword } = user;
 
@@ -114,6 +117,8 @@ export const userRoutes = new Elysia({ prefix: "/user" })
           auth.secure = config.cookieConfig.secure;
         if (config.cookieConfig.sameSite)
           auth.sameSite = config.cookieConfig.sameSite;
+        if (config.cookieConfig.domain)
+          auth.domain = config.cookieConfig.domain;
 
         return { success: true, user: userWithoutPassword };
       } catch (_e) {

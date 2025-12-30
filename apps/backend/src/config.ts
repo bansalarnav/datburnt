@@ -3,6 +3,7 @@ import { env } from "./utils/env";
 export interface CookieConfig {
   httpOnly: boolean;
   maxAge: number;
+  domain?: string;
   secure?: boolean;
   sameSite?: "none" | "lax" | "strict";
 }
@@ -29,7 +30,8 @@ const config: Config = {
           httpOnly: true,
           maxAge: 15552000000,
           secure: true,
-          sameSite: "none",
+          domain: ".datburnt.arnav.fish",
+          sameSite: "lax",
         }
       : { httpOnly: true, maxAge: 15552000000 },
 };
