@@ -41,11 +41,11 @@ function IndexComponent() {
           <div className="space-y-4">
             <Input
               type="text"
-              placeholder="game code"
+              placeholder="Game Code"
               value={gameCode}
               onChange={(e) => setGameCode(e.target.value.slice(0, 6))}
               maxLength={6}
-              className="text-center text-lg tracking-wider uppercase"
+              className="text-lg tracking-wider"
             />
 
             <PrimaryButton

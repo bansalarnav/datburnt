@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PrimaryButton } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,10 +8,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
-import { apiClient } from "@/utils/apiClient";
-import { useUserStore } from "@/state/user";
 import type { User } from "@/state/user";
+import { useUserStore } from "@/state/user";
+import { apiClient } from "@/utils/apiClient";
 
 interface AuthModalProps {
   open: boolean;
@@ -46,7 +46,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         if (response.data.success && response.data.user) {
           setUser(response.data.user);
           onOpenChange(false);
-          // Reset form
           setEmail("");
           setPassword("");
           setUsername("");
@@ -65,7 +64,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
         });
 
         if (response.data.success) {
-          // After registration, fetch the user data
           const meResponse = await apiClient.get<{
             success: boolean;
             user: User;
@@ -74,7 +72,6 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           if (meResponse.data.success) {
             setUser(meResponse.data.user);
             onOpenChange(false);
-            // Reset form
             setEmail("");
             setPassword("");
             setUsername("");
