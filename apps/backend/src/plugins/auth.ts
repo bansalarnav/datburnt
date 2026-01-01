@@ -9,7 +9,7 @@ export const authTokenJwt = jwt({
 
 export const authPlugin = new Elysia()
   .use(authTokenJwt)
-  .resolve({ as: "global" }, async ({ auth_token, cookie: { auth }, set }) => {
+  .resolve({ as: "scoped" }, async ({ auth_token, cookie: { auth }, set }) => {
     if (!auth || !auth.value) {
       set.status = 401;
       throw new Error("Unauthorized");
