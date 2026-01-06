@@ -31,18 +31,11 @@ export const roomRoutes = new Elysia({ prefix: "/room" }).use(authPlugin).post(
         };
       }
 
-      const room: Room.Info = {
-        id: roomId,
-        owner: userId,
-        maxPlayers,
-        players: [],
-      };
-
-      Room.create(room);
+      const room = Room.create(roomId, userId, maxPlayers);
 
       return {
         success: true,
-        room,
+        room: room.toJSON(),
       };
     } catch (_error) {
       set.status = 500;

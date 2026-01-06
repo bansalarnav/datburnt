@@ -2,11 +2,10 @@ import { useEffect } from "react";
 import { create } from "zustand";
 
 export interface User {
-  id: number;
+  id: string;
   username: string;
   email: string;
   avatar: string;
-  createdAt: Date;
 }
 
 interface UserState {
