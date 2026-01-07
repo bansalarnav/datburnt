@@ -1,9 +1,9 @@
 import { cookie } from "@elysiajs/cookie";
 import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
+import { gameRoutes } from "./api/routes/game";
+import { userRoutes } from "./api/routes/user";
 import config from "./config";
-import { roomRoutes } from "./routes/room";
-import { userRoutes } from "./routes/user";
 import { websocketRoutes } from "./ws";
 
 const port = config.PORT;
@@ -25,15 +25,10 @@ const app = new Elysia()
       ],
     })
   )
-  .get("/", () => "Hare Rama")
+  .get("/", () => "Hello World!")
   .use(userRoutes)
-  .use(roomRoutes)
+  .use(gameRoutes)
   .use(websocketRoutes)
   .listen(port);
 
 console.log(`Server started at ${app.server?.hostname}:${app.server?.port}`);
-
-console.log("Note: WebSocket functionality needs to be migrated separately.");
-console.log(
-  "The original Socket.io code has been converted to TypeScript in websocket/*.ts files."
-);

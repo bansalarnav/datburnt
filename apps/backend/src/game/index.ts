@@ -1,29 +1,29 @@
-import type { JoinResult, Player, PlayerWithWS, WebSocketLike } from "./types";
+import type { Player } from "./player";
 
-export class GameRoom {
+export class Game {
   private id: string;
   private owner: string;
   private maxPlayers: number;
-  private players: Map<string, PlayerWithWS>;
+  private players: Map<string, Player.Info>;
   private createdAt: Date;
   private cleanupTimer: Timer | null = null;
-  private deleteRoom: () => void;
+  private deleteGame: () => void;
 
   constructor(
     id: string,
     owner: string,
     maxPlayers: number,
-    deleteRoom: () => void
+    deleteGame: () => void
   ) {
     this.id = id;
     this.owner = owner;
     this.maxPlayers = maxPlayers;
     this.players = new Map();
     this.createdAt = new Date();
-    this.deleteRoom = deleteRoom;
+    this.deleteGame = deleteGame;
   }
 
-  addPlayer(ws: WebSocketLike, user: Player): JoinResult {
+  addPlayer(ws: Player.WebSocketLike, user: Player.Data): Player.JoinResult {
     const validation = this.canJoin(user.id);
     if (!validation.canJoin) {
       return { success: false, error: validation.reason };
@@ -42,7 +42,7 @@ export class GameRoom {
       existingPlayer.name = user.name;
       existingPlayer.avatar = user.avatar;
     } else {
-      const newPlayer: PlayerWithWS = {
+      const newPlayer: Player.Info = {
         id: user.id,
         name: user.name,
         avatar: user.avatar,
@@ -75,9 +75,6 @@ export class GameRoom {
     return { success: true };
   }
 
-  /**
-   * Mark a player as disconnected (doesn't remove them from the room)
-   */
   removePlayer(playerId: string): void {
     const player = this.players.get(playerId);
     if (!player) return;
@@ -95,9 +92,9 @@ export class GameRoom {
   }
 
   /**
-   * Kick a player from the room (removes them completely)
+   * Kick a player from the game (removes them completely)
    */
-  kickPlayer(playerId: string, kickerId: string): JoinResult {
+  kickPlayer(playerId: string, kickerId: string): Player.JoinResult {
     // Validate that the kicker is the owner
     if (kickerId !== this.owner) {
       return { success: false, error: "Only the owner can kick players" };
@@ -113,7 +110,7 @@ export class GameRoom {
       player.ws.close();
     }
 
-    // Remove player from the room completely
+    // Remove player from the game completely
     this.players.delete(playerId);
 
     this.broadcast({
@@ -127,7 +124,7 @@ export class GameRoom {
     return { success: true };
   }
 
-  getPlayer(playerId: string): PlayerWithWS | undefined {
+  getPlayer(playerId: string): Player.Info | undefined {
     return this.players.get(playerId);
   }
 
@@ -142,7 +139,7 @@ export class GameRoom {
     const existingPlayer = this.players.get(userId);
 
     if (existingPlayer?.connected) {
-      return { canJoin: false, reason: "Player already in room" };
+      return { canJoin: false, reason: "Player already in game" };
     }
 
     if (userId === this.owner) {
@@ -154,15 +151,15 @@ export class GameRoom {
     ).length;
 
     const ownerPlayer = this.players.get(this.owner);
-    const ownerInRoom = ownerPlayer?.connected === true;
+    const ownerInGame = ownerPlayer?.connected === true;
 
-    const effectiveMax = ownerInRoom ? this.maxPlayers : this.maxPlayers - 1;
+    const effectiveMax = ownerInGame ? this.maxPlayers : this.maxPlayers - 1;
 
     if (connectedCount < effectiveMax) {
       return { canJoin: true };
     }
 
-    return { canJoin: false, reason: "Room is full" };
+    return { canJoin: false, reason: "Game is full" };
   }
 
   broadcast(message: object, excludePlayerId?: string): void {
@@ -194,8 +191,8 @@ export class GameRoom {
       // Start 5-minute countdown to deletion
       this.cleanupTimer = setTimeout(
         () => {
-          console.log(`Deleting inactive room: ${this.id}`);
-          this.deleteRoom();
+          console.log(`Deleting inactive game: ${this.id}`);
+          this.deleteGame();
         },
         5 * 60 * 1000
       ); // 5 minutes
@@ -203,11 +200,12 @@ export class GameRoom {
   }
 
   toJSON() {
-    const players: Player[] = Array.from(this.players.values()).map((p) => ({
+    const players: Player.Data[] = Array.from(
+      this.players.values().filter((p) => p.connected)
+    ).map((p) => ({
       id: p.id,
       name: p.name,
       avatar: p.avatar,
-      connected: p.connected,
     }));
 
     return {

@@ -22,7 +22,8 @@
     "drizzle-orm": "^0.29.0",
     "elysia": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
-    "postgres": "^3.4.3"
+    "postgres": "^3.4.3",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.5",

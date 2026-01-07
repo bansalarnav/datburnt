@@ -1,11 +1,5 @@
-import jwt from "@elysiajs/jwt";
 import { Elysia } from "elysia";
-import { env } from "../utils/env";
-
-export const authTokenJwt = jwt({
-  name: "auth_token",
-  secret: env("AUTH_TOKEN_SECRET"),
-});
+import { authTokenJwt } from "./jwt";
 
 export const authPlugin = new Elysia()
   .use(authTokenJwt)

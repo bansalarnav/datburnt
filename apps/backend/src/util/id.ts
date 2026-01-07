@@ -8,7 +8,7 @@ export function makeid(length: number): string {
   return result;
 }
 
-export function makeRoomId(): string {
+export function makeGameId(): string {
   let result = "";
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const charactersLength = characters.length;

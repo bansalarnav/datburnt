@@ -1,4 +1,4 @@
-import { env } from "./utils/env";
+import { env } from "../util/env";
 
 export interface CookieConfig {
   httpOnly: boolean;

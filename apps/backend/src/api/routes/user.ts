@@ -1,25 +1,10 @@
-import { eq, or } from "drizzle-orm";
 import { Elysia, t } from "elysia";
-import config from "../config";
-import { db } from "../db";
-import { users } from "../db/schema";
-import { authPlugin, authTokenJwt } from "../plugins/auth";
-import { hashPassword, validateEmail, verifyPassword } from "../utils/auth";
-
-function randomString(length: number): string {
-  const chars =
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghiklmnopqrstuvwxyz".split("");
-
-  if (!length) {
-    length = Math.floor(Math.random() * chars.length);
-  }
-
-  let str = "";
-  for (let i = 0; i < length; i++) {
-    str += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return str;
-}
+import { authTokenJwt } from "../../auth/jwt";
+import { authPlugin } from "../../auth/middleware";
+import { validateEmail } from "../../auth/validation";
+import config from "../../config";
+import { hashPassword, verifyPassword } from "../../user/password";
+import { User } from "../../user/user";
 
 export const userRoutes = new Elysia({ prefix: "/user" })
   .use(authTokenJwt)
@@ -27,17 +12,15 @@ export const userRoutes = new Elysia({ prefix: "/user" })
     "/register",
     async ({ auth_token, body, cookie: { auth }, set }) => {
       try {
-        const avatarUrl = `https://api.dicebear.com/9.x/adventurer-neutral/svg?seed=${randomString(8)}`;
+        const avatarUrl = User.generateAvatarUrl();
 
         const validEmail = validateEmail(body.email);
         if (!validEmail) return { success: false, message: "Invalid Email ID" };
 
-        const [existingUser] = await db
-          .select()
-          .from(users)
-          .where(
-            or(eq(users.email, body.email), eq(users.username, body.username))
-          );
+        const existingUser = await User.findByEmailOrUsername(
+          body.email,
+          body.username
+        );
         if (existingUser) {
           set.status = 400;
           return {
@@ -46,15 +29,12 @@ export const userRoutes = new Elysia({ prefix: "/user" })
         }
 
         const hashed = await hashPassword(body.password);
-        const [user] = await db
-          .insert(users)
-          .values({
-            username: body.username,
-            email: body.email,
-            password: hashed,
-            avatar: avatarUrl,
-          })
-          .returning();
+        const user = await User.create({
+          username: body.username,
+          email: body.email,
+          password: hashed,
+          avatar: avatarUrl,
+        });
 
         const jwtToken = await auth_token.sign({ id: user.id });
         console.log(jwtToken);
@@ -91,10 +71,7 @@ export const userRoutes = new Elysia({ prefix: "/user" })
       set,
     }) => {
       try {
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email));
+        const user = await User.findByEmail(email);
         if (!user) {
           set.status = 400;
           return {
@@ -136,10 +113,7 @@ export const userRoutes = new Elysia({ prefix: "/user" })
     app
       .use(authPlugin)
       .get("/me", async ({ userId, set }) => {
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.id, userId));
+        const user = await User.findById(userId);
         if (!user) {
           set.status = 400;
           return { success: false, message: "Invalid Token" };

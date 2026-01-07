@@ -1,10 +1,10 @@
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
-import { db } from "../db";
-import { users } from "../db/schema";
-import { authTokenJwt } from "../plugins/auth";
-import { Room } from "../state/room";
-import makeid from "../utils/makeid";
+import { db } from "../../db";
+import { users } from "../../db/schema";
+import { authTokenJwt } from "../../auth/jwt";
+import { GameRegistry } from "../../game/registry";
+import makeid from "../../util/id";
 
 export const gameWebSocket = new Elysia()
   .use(authTokenJwt)
@@ -46,32 +46,31 @@ export const gameWebSocket = new Elysia()
 
       const user = ws.data.user;
 
-      const roomId = ws.data.query?.roomId;
-      if (!roomId || typeof roomId !== "string") {
+      const gameId = ws.data.query?.gameId;
+      if (!gameId || typeof gameId !== "string") {
         ws.send(
           JSON.stringify({
             type: "error",
-            message: "Room ID is required",
+            message: "Game ID is required",
           })
         );
         ws.close();
         return;
       }
 
-      const room = Room.get(roomId);
-      if (!room) {
+      const game = GameRegistry.get(gameId);
+      if (!game) {
         ws.send(
           JSON.stringify({
             type: "error",
-            message: "Room not found",
+            message: "Game not found",
           })
         );
         ws.close();
         return;
       }
 
-      // Try to join the room
-      const result = room.addPlayer(ws, user);
+      const result = game.addPlayer(ws, user);
       if (!result.success) {
         ws.send(
           JSON.stringify({
@@ -85,13 +84,13 @@ export const gameWebSocket = new Elysia()
     },
     message(ws, message) {
       const data = JSON.parse(message as string);
-      const roomId = ws.data.query?.roomId;
-      const room = Room.get(roomId as string);
+      const gameId = ws.data.query?.gameId;
+      const game = GameRegistry.get(gameId as string);
 
-      if (!room || !ws.data.user) return;
+      if (!game || !ws.data.user) return;
 
       if (data.type === "kick_player") {
-        const result = room.kickPlayer(data.playerId, ws.data.user.id);
+        const result = game.kickPlayer(data.playerId, ws.data.user.id);
         if (!result.success) {
           ws.send(
             JSON.stringify({
@@ -103,11 +102,11 @@ export const gameWebSocket = new Elysia()
       }
     },
     close(ws) {
-      const roomId = ws.data.query?.roomId;
-      const room = Room.get(roomId as string);
+      const gameId = ws.data.query?.gameId;
+      const game = GameRegistry.get(gameId as string);
 
-      if (room && ws.data.user) {
-        room.removePlayer(ws.data.user.id);
+      if (game && ws.data.user) {
+        game.removePlayer(ws.data.user.id);
       }
     },
   });
