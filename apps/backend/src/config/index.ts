@@ -13,11 +13,19 @@ export interface RemoveCookieConfig {
   secure?: boolean;
 }
 
+export interface S3Config {
+  endpoint: string;
+  bucketName: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+}
+
 export interface Config {
   PORT: number;
   DATABASE_URL: string;
   allowedOrigins: string[];
   cookieConfig: CookieConfig;
+  s3: S3Config;
 }
 
 const config: Config = {
@@ -34,6 +42,12 @@ const config: Config = {
           sameSite: "lax",
         }
       : { httpOnly: true, maxAge: 15552000000 },
+  s3: {
+    endpoint: env("S3_ENDPOINT"),
+    bucketName: env("S3_BUCKET_NAME"),
+    accessKeyId: env("S3_ACCESS_KEY_ID"),
+    secretAccessKey: env("S3_SECRET_ACCESS_KEY"),
+  },
 };
 
 export default config;

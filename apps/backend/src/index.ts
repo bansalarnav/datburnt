@@ -3,6 +3,7 @@ import { cors } from "@elysiajs/cors";
 import { Elysia } from "elysia";
 import { gameRoutes } from "./api/routes/game";
 import { userRoutes } from "./api/routes/user";
+import { collectionRoutes } from "./api/routes/collection";
 import config from "./config";
 import { websocketRoutes } from "./ws";
 
@@ -28,6 +29,7 @@ const app = new Elysia()
   .get("/", () => "Hello World!")
   .use(userRoutes)
   .use(gameRoutes)
+  .use(collectionRoutes)
   .use(websocketRoutes)
   .listen(port);
 
