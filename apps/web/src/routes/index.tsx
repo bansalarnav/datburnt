@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Input } from "@/components/ui/input";
-import { PrimaryButton } from "@/components/ui/button";
-import { useUserStore } from "@/state/user";
+import { useState } from "react";
 import { AuthModal } from "@/components/AuthModal";
 import { CreateRoomModal } from "@/components/CreateRoomModal";
+import { PrimaryButton } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useUserStore } from "@/state/user";
 
 export const Route = createFileRoute("/")({
   component: IndexComponent,

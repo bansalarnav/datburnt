@@ -25,6 +25,11 @@ export const collectionRoutes = new Elysia({ prefix: "/collection" })
   )
 
   .get("/", async ({ userId }) => {
+    const collections = await Collection.findByUserId(userId);
+    return collections;
+  })
+
+  .get("/all", async ({ userId }) => {
     const collections = await Collection.findByUserId(userId, true);
     return collections;
   })

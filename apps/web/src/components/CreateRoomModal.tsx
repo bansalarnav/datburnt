@@ -39,7 +39,7 @@ export function CreateRoomModal({ open, onOpenChange }: CreateRoomModalProps) {
   const { data: collections = [], isLoading: loadingCollections } = useQuery({
     queryKey: ["collections"],
     queryFn: async () => {
-      const response = await apiClient.get<Collection[]>("/collection");
+      const response = await apiClient.get<Collection[]>("/collection/all");
       return response.data;
     },
     enabled: open,
@@ -187,7 +187,14 @@ export function CreateRoomModal({ open, onOpenChange }: CreateRoomModalProps) {
               </div>
             ) : collections.length === 0 ? (
               <div className="text-sm text-muted-foreground py-4 text-center">
-                No collections available. Please create a collection first.
+                No collections available. Please{" "}
+                <a
+                  href="/my-account#collections"
+                  className="text-app-primary hover:underline font-medium"
+                >
+                  create a collection first
+                </a>
+                .
               </div>
             ) : (
               <div className="space-y-3 max-h-[200px] overflow-y-auto border rounded-md p-4">
