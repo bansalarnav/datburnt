@@ -25,7 +25,7 @@ export const collectionRoutes = new Elysia({ prefix: "/collection" })
   )
 
   .get("/", async ({ userId }) => {
-    const collections = await Collection.findByUserId(userId);
+    const collections = await Collection.findByUserId(userId, true);
     return collections;
   })
 
@@ -98,8 +98,8 @@ export const collectionRoutes = new Elysia({ prefix: "/collection" })
     return { success: true };
   })
 
-  .delete("/:collectionId/image/:imageId", async ({ params, userId, set }) => {
-    const existing = await Collection.findById(params.collectionId);
+  .delete("/:id/image/:imageId", async ({ params, userId, set }) => {
+    const existing = await Collection.findById(params.id);
     if (!existing) {
       set.status = 404;
       return { error: "Collection not found" };
@@ -110,10 +110,7 @@ export const collectionRoutes = new Elysia({ prefix: "/collection" })
       return { error: "Access denied" };
     }
 
-    const deleted = await Collection.deleteImage(
-      params.collectionId,
-      params.imageId
-    );
+    const deleted = await Collection.deleteImage(params.id, params.imageId);
 
     if (!deleted) {
       set.status = 404;
@@ -124,10 +121,10 @@ export const collectionRoutes = new Elysia({ prefix: "/collection" })
   })
 
   .post(
-    "/:collectionId/image",
+    "/:id/image",
     async ({ params, body, userId, set }) => {
       try {
-        const existing = await Collection.findById(params.collectionId);
+        const existing = await Collection.findById(params.id);
         if (!existing) {
           set.status = 404;
           return { error: "Collection not found" };
@@ -139,7 +136,7 @@ export const collectionRoutes = new Elysia({ prefix: "/collection" })
         }
 
         const { uploadUrl } = await Collection.addImage(
-          params.collectionId,
+          params.id,
           body.filename
         );
 

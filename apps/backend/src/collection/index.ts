@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db";
 import { collections, images } from "../db/schema";
@@ -56,7 +56,15 @@ export namespace Collection {
     return collection || null;
   }
 
-  export async function findByUserId(userId: string) {
+  export async function findByUserId(userId: string, includePublic = false) {
+    if (includePublic) {
+      return await db
+        .select()
+        .from(collections)
+        .where(
+          or(eq(collections.userId, userId), eq(collections.public, true))
+        );
+    }
     return await db
       .select()
       .from(collections)

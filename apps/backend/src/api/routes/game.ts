@@ -48,6 +48,8 @@ export const gameRoutes = new Elysia({ prefix: "/game" }).use(authPlugin).post(
   {
     body: t.Object({
       maxPlayers: t.Number({ minimum: 4, maximum: 8 }),
+      numRounds: t.Number({ minimum: 1, maximum: 10, default: 6 }),
+      collections: t.Array(t.String()),
     }),
   }
 );

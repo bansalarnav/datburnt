@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { PrimaryButton } from "@/components/ui/button";
 import { useUserStore } from "@/state/user";
 import { AuthModal } from "@/components/AuthModal";
+import { CreateRoomModal } from "@/components/CreateRoomModal";
 
 export const Route = createFileRoute("/")({
   component: IndexComponent,
@@ -14,6 +15,7 @@ function IndexComponent() {
   const user = useUserStore((state) => state.user);
   const [gameCode, setGameCode] = useState("");
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [createRoomModalOpen, setCreateRoomModalOpen] = useState(false);
 
   const handleJoinRoom = () => {
     if (gameCode.trim().length === 6) {
@@ -22,8 +24,7 @@ function IndexComponent() {
   };
 
   const handleCreateRoom = () => {
-    // TODO: Implement create room logic
-    console.log("Create room");
+    setCreateRoomModalOpen(true);
   };
 
   const handleSignIn = () => {
@@ -79,6 +80,10 @@ function IndexComponent() {
       </div>
 
       <AuthModal open={authModalOpen} onOpenChange={setAuthModalOpen} />
+      <CreateRoomModal
+        open={createRoomModalOpen}
+        onOpenChange={setCreateRoomModalOpen}
+      />
     </>
   );
 }

@@ -21,6 +21,8 @@ export class Game {
     this.players = new Map();
     this.createdAt = new Date();
     this.deleteGame = deleteGame;
+
+    this.scheduleCleanup();
   }
 
   addPlayer(ws: Player.WebSocketLike, user: Player.Data): Player.JoinResult {
@@ -87,15 +89,10 @@ export class Game {
       data: { playerId },
     });
 
-    // Schedule cleanup if this was the last connected player
     this.scheduleCleanup();
   }
 
-  /**
-   * Kick a player from the game (removes them completely)
-   */
   kickPlayer(playerId: string, kickerId: string): Player.JoinResult {
-    // Validate that the kicker is the owner
     if (kickerId !== this.owner) {
       return { success: false, error: "Only the owner can kick players" };
     }
@@ -105,12 +102,10 @@ export class Game {
       return { success: false, error: "Player not found" };
     }
 
-    // Close the player's WebSocket connection
     if (player.ws) {
       player.ws.close();
     }
 
-    // Remove player from the game completely
     this.players.delete(playerId);
 
     this.broadcast({
@@ -118,7 +113,6 @@ export class Game {
       data: { playerId },
     });
 
-    // Schedule cleanup if this was the last connected player
     this.scheduleCleanup();
 
     return { success: true };
@@ -172,23 +166,17 @@ export class Game {
     }
   }
 
-  /**
-   * Schedule cleanup if all players are disconnected
-   */
   private scheduleCleanup(): void {
-    // Clear any existing timer
     if (this.cleanupTimer) {
       clearTimeout(this.cleanupTimer);
       this.cleanupTimer = null;
     }
 
-    // Check if all players are disconnected
     const allDisconnected = Array.from(this.players.values()).every(
       (p) => !p.connected
     );
 
     if (allDisconnected) {
-      // Start 5-minute countdown to deletion
       this.cleanupTimer = setTimeout(
         () => {
           console.log(`Deleting inactive game: ${this.id}`);
