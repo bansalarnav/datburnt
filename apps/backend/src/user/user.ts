@@ -58,4 +58,34 @@ export namespace User {
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
+
+  export async function updateUsername(userId: string, newUsername: string) {
+    const [updated] = await db
+      .update(users)
+      .set({ username: newUsername })
+      .where(eq(users.id, userId))
+      .returning();
+    return updated;
+  }
+
+  export async function updatePassword(
+    userId: string,
+    newPasswordHash: string
+  ) {
+    const [updated] = await db
+      .update(users)
+      .set({ password: newPasswordHash })
+      .where(eq(users.id, userId))
+      .returning();
+    return updated;
+  }
+
+  export async function updateAvatar(userId: string, newAvatarUrl: string) {
+    const [updated] = await db
+      .update(users)
+      .set({ avatar: newAvatarUrl })
+      .where(eq(users.id, userId))
+      .returning();
+    return updated;
+  }
 }

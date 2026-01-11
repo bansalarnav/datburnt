@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { UserIcon } from "lucide-react";
 import { useState } from "react";
 import { AuthModal } from "@/components/AuthModal";
 import { CreateRoomModal } from "@/components/CreateRoomModal";
@@ -33,6 +34,19 @@ function IndexComponent() {
 
   return (
     <>
+      {user && (
+        <div className="absolute top-4 right-4 z-10">
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/my-account" } as any)}
+            className="flex items-center gap-2 px-4 py-2 rounded-md border border-border bg-card hover:bg-muted transition-colors shadow-sm"
+          >
+            <UserIcon className="h-4 w-4" />
+            <span className="text-sm font-medium">My Account</span>
+          </button>
+        </div>
+      )}
+
       <div className="min-h-screen flex items-center justify-center bg-background p-8">
         <div className="w-full max-w-md bg-card border border-border rounded-lg shadow-lg p-8">
           <h1 className="text-2xl font-bold text-center mb-6">

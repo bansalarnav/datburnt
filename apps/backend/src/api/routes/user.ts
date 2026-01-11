@@ -126,4 +126,70 @@ export const userRoutes = new Elysia({ prefix: "/user" })
         auth.remove();
         return { success: true };
       })
+      .put(
+        "/username",
+        async ({ userId, body, set }) => {
+          try {
+            const updatedUser = await User.updateUsername(
+              userId,
+              body.username
+            );
+            const { password: _, ...userWithoutPassword } = updatedUser;
+
+            return { success: true, user: userWithoutPassword };
+          } catch (_e) {
+            set.status = 500;
+            return { success: false, message: "Failed to update username" };
+          }
+        },
+        {
+          body: t.Object({
+            username: t.String({ minLength: 3 }),
+          }),
+        }
+      )
+      .put(
+        "/password",
+        async ({ userId, body, set }) => {
+          try {
+            const user = await User.findById(userId);
+            if (!user) {
+              set.status = 400;
+              return { success: false, message: "User not found" };
+            }
+
+            const match = await verifyPassword(body.oldPassword, user.password);
+            if (!match) {
+              set.status = 400;
+              return { success: false, message: "Incorrect old password" };
+            }
+
+            const hashed = await hashPassword(body.newPassword);
+            await User.updatePassword(userId, hashed);
+
+            return { success: true, message: "Password updated successfully" };
+          } catch (_e) {
+            set.status = 500;
+            return { success: false, message: "Failed to update password" };
+          }
+        },
+        {
+          body: t.Object({
+            oldPassword: t.String(),
+            newPassword: t.String({ minLength: 6 }),
+          }),
+        }
+      )
+      .post("/avatar/regenerate", async ({ userId, set }) => {
+        try {
+          const newAvatarUrl = User.generateAvatarUrl();
+          const updatedUser = await User.updateAvatar(userId, newAvatarUrl);
+          const { password: _, ...userWithoutPassword } = updatedUser;
+
+          return { success: true, user: userWithoutPassword };
+        } catch (_e) {
+          set.status = 500;
+          return { success: false, message: "Failed to regenerate avatar" };
+        }
+      })
   );
