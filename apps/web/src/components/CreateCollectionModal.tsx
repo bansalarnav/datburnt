@@ -1,5 +1,6 @@
-import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { PrimaryButton } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { PrimaryButton } from "@/components/ui/button";
-import { apiClient } from "@/utils/apiClient";
 import type { Collection } from "@/types/collection";
+import { apiClient } from "@/utils/apiClient";
 
 interface CreateCollectionModalProps {
   open: boolean;
@@ -70,9 +70,6 @@ export function CreateCollectionModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Collection</DialogTitle>
-          <DialogDescription>
-            Create a new collection to organize your images.
-          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">

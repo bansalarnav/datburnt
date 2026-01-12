@@ -1,11 +1,7 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { ImageIcon, TrashIcon, UploadIcon } from "lucide-react";
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,15 +12,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { apiClient } from "@/utils/apiClient";
-import { UploadIcon, TrashIcon, ImageIcon } from "lucide-react";
-import axios from "axios";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { CollectionWithImages } from "@/types/collection";
+import { apiClient } from "@/utils/apiClient";
 
 interface CollectionModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  collectionId: string | null;
+  collectionId: string;
 }
 
 export function CollectionModal({
@@ -124,7 +124,6 @@ export function CollectionModal({
           </DialogHeader>
 
           <div className="space-y-4">
-            {/* Upload Section */}
             <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
               <input
                 type="file"
@@ -151,7 +150,6 @@ export function CollectionModal({
               </label>
             </div>
 
-            {/* Images Grid */}
             {isLoading ? (
               <div className="text-center py-8 text-muted-foreground">
                 Loading images...
@@ -185,6 +183,7 @@ export function CollectionModal({
                         </div>
                       </div>
                       <button
+                        type="button"
                         onClick={() => setDeleteImageId(image.id)}
                         className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 rounded"
                         title="Delete image"
@@ -200,7 +199,6 @@ export function CollectionModal({
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog
         open={!!deleteImageId}
         onOpenChange={() => setDeleteImageId(null)}

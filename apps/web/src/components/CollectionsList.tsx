@@ -1,6 +1,6 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Edit2Icon, FolderIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/utils/apiClient";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,11 +12,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { PrimaryButton } from "@/components/ui/button";
+import type { Collection } from "@/types/collection";
+import { apiClient } from "@/utils/apiClient";
+import { CollectionModal } from "./CollectionModal";
 import { CreateCollectionModal } from "./CreateCollectionModal";
 import { EditCollectionModal } from "./EditCollectionModal";
-import { CollectionModal } from "./CollectionModal";
-import { PlusIcon, Edit2Icon, TrashIcon, FolderIcon } from "lucide-react";
-import type { Collection } from "@/types/collection";
 
 export function CollectionsList() {
   const queryClient = useQueryClient();
@@ -115,6 +115,7 @@ export function CollectionsList() {
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleEditClick(collection);
@@ -125,6 +126,7 @@ export function CollectionsList() {
                     <Edit2Icon className="h-4 w-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       setDeleteCollectionId(collection.id);
@@ -141,7 +143,6 @@ export function CollectionsList() {
         )}
       </div>
 
-      {/* Modals */}
       <CreateCollectionModal
         open={createModalOpen}
         onOpenChange={setCreateModalOpen}
@@ -153,13 +154,14 @@ export function CollectionsList() {
           collection={selectedCollection}
         />
       )}
-      <CollectionModal
-        open={collectionModalOpen}
-        onOpenChange={setCollectionModalOpen}
-        collectionId={selectedCollection?.id || null}
-      />
+      {selectedCollection && (
+        <CollectionModal
+          open={collectionModalOpen}
+          onOpenChange={setCollectionModalOpen}
+          collectionId={selectedCollection.id}
+        />
+      )}
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog
         open={!!deleteCollectionId}
         onOpenChange={() => setDeleteCollectionId(null)}
