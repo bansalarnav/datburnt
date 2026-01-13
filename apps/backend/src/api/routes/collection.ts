@@ -140,12 +140,12 @@ export const collectionRoutes = new Elysia({ prefix: "/collection" })
           return { error: "Access denied" };
         }
 
-        const { uploadUrl } = await Collection.addImage(
+        const { uploadUrl, image } = await Collection.addImage(
           params.id,
           body.filename
         );
 
-        return { success: true, uploadUrl };
+        return { success: true, uploadUrl, imageId: image.id };
       } catch (_error: any) {
         set.status = 500;
         return { error: "Failed to generate upload URL" };
@@ -177,6 +177,7 @@ export const collectionRoutes = new Elysia({ prefix: "/collection" })
 
         return image;
       } catch (_error: any) {
+        console.log(_error);
         set.status = 500;
         return { error: "Failed to confirm upload" };
       }

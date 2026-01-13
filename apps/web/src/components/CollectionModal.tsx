@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { CollectionWithImages } from "@/types/collection";
+import type { Collection, CollectionWithImages } from "@/types/collection";
 import { apiClient } from "@/utils/apiClient";
 
 interface CollectionModalProps {
@@ -62,6 +62,11 @@ export function CollectionModal({
           };
         }
       );
+      queryClient.setQueryData<Collection[]>(["collections"], (old = []) =>
+        old.map((c) =>
+          c.id === collectionId ? { ...c, imageCount: c.imageCount - 1 } : c
+        )
+      );
       setDeleteImageId(null);
     },
   });
@@ -73,7 +78,7 @@ export function CollectionModal({
     setUploading(true);
 
     try {
-      for (const file of Array.from(files)) {
+      const uploadPromises = Array.from(files).map(async (file) => {
         const { data: uploadData } = await apiClient.post<{
           uploadUrl: string;
           imageId: string;
@@ -93,17 +98,29 @@ export function CollectionModal({
           imageId: uploadData.imageId || file.name,
         });
 
-        queryClient.setQueryData<CollectionWithImages>(
-          ["collection", collectionId],
-          (old) => {
-            if (!old) return old;
-            return {
-              ...old,
-              images: [...old.images, newImage],
-            };
-          }
-        );
-      }
+        return newImage;
+      });
+
+      const uploadedImages = await Promise.all(uploadPromises);
+
+      queryClient.setQueryData<CollectionWithImages>(
+        ["collection", collectionId],
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            images: [...old.images, ...uploadedImages],
+          };
+        }
+      );
+
+      queryClient.setQueryData<Collection[]>(["collections"], (old = []) =>
+        old.map((c) =>
+          c.id === collectionId
+            ? { ...c, imageCount: c.imageCount + uploadedImages.length }
+            : c
+        )
+      );
     } catch (error) {
       console.error("Upload failed:", error);
       alert("Failed to upload images. Please try again.");

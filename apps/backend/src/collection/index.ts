@@ -1,4 +1,4 @@
-import { and, eq, or } from "drizzle-orm";
+import { and, count, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db";
 import { collections, images } from "../db/schema";
@@ -44,7 +44,10 @@ export namespace Collection {
       })
       .returning();
 
-    return collection;
+    return {
+      ...collection,
+      imageCount: 0,
+    };
   }
 
   export async function findById(collectionId: string) {
@@ -57,18 +60,27 @@ export namespace Collection {
   }
 
   export async function findByUserId(userId: string, includePublic = false) {
-    if (includePublic) {
-      return await db
-        .select()
-        .from(collections)
-        .where(
-          or(eq(collections.userId, userId), eq(collections.public, true))
-        );
-    }
-    return await db
-      .select()
+    const results = await db
+      .select({
+        id: collections.id,
+        userId: collections.userId,
+        title: collections.title,
+        description: collections.description,
+        public: collections.public,
+        createdAt: collections.createdAt,
+        updatedAt: collections.updatedAt,
+        imageCount: count(images.id),
+      })
       .from(collections)
-      .where(eq(collections.userId, userId));
+      .leftJoin(images, eq(collections.id, images.collectionId))
+      .where(
+        includePublic
+          ? or(eq(collections.userId, userId), eq(collections.public, true))
+          : eq(collections.userId, userId)
+      )
+      .groupBy(collections.id);
+
+    return results;
   }
 
   export async function update(
@@ -92,7 +104,17 @@ export namespace Collection {
       .where(eq(collections.id, collectionId))
       .returning();
 
-    return updated || null;
+    const [result] = await db
+      .select({
+        imageCount: count(images.id),
+      })
+      .from(images)
+      .where(eq(images.collectionId, collectionId));
+
+    return {
+      ...updated,
+      imageCount: result?.imageCount || 0,
+    };
   }
 
   export async function deleteCollection(collectionId: string) {
@@ -224,6 +246,10 @@ export namespace Collection {
     const size = await getFileSize(image.s3Key);
     await db.update(images).set({ size, uploadedAt: new Date() }).returning();
 
-    return true;
+    return {
+      ...image,
+      uploadedAt: new Date(),
+      size,
+    };
   }
 }
