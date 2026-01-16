@@ -1,9 +1,17 @@
+import type {
+  GameInfo,
+  GameStatus,
+  Player as SharedPlayer,
+} from "@datburnt/types/game";
 import type { Player } from "./player";
 
 export class Game {
   private id: string;
   private owner: string;
   private maxPlayers: number;
+  private numRounds: number;
+  private collections: string[];
+  private status: GameStatus;
   private players: Map<string, Player.Info>;
   private createdAt: Date;
   private cleanupTimer: Timer | null = null;
@@ -13,11 +21,16 @@ export class Game {
     id: string,
     owner: string,
     maxPlayers: number,
+    numRounds: number,
+    collections: string[],
     deleteGame: () => void
   ) {
     this.id = id;
     this.owner = owner;
     this.maxPlayers = maxPlayers;
+    this.numRounds = numRounds;
+    this.collections = collections;
+    this.status = "lobby";
     this.players = new Map();
     this.createdAt = new Date();
     this.deleteGame = deleteGame;
@@ -54,10 +67,11 @@ export class Game {
       this.players.set(user.id, newPlayer);
     }
 
+    console.log("sending game info");
     ws.send(
       JSON.stringify({
         type: "game_info",
-        data: this.toJSON(),
+        data: this.toJSONWithState(),
       })
     );
 
@@ -114,6 +128,31 @@ export class Game {
     });
 
     this.scheduleCleanup();
+
+    return { success: true };
+  }
+
+  startGame(userId: string): Player.JoinResult {
+    if (userId !== this.owner) {
+      return { success: false, error: "Only the owner can start the game" };
+    }
+
+    const connectedPlayers = Array.from(this.players.values()).filter(
+      (p) => p.connected
+    );
+
+    if (connectedPlayers.length < 3) {
+      return {
+        success: false,
+        error: "Need at least 3 players to start the game",
+      };
+    }
+
+    this.status = "playing";
+
+    this.broadcast({
+      type: "game_started",
+    });
 
     return { success: true };
   }
@@ -187,21 +226,31 @@ export class Game {
     }
   }
 
-  toJSON() {
-    const players: Player.Data[] = Array.from(
+  toJSON(): GameInfo {
+    return {
+      id: this.id,
+      owner: this.owner,
+      maxPlayers: this.maxPlayers,
+      numRounds: this.numRounds,
+      collections: this.collections,
+      createdAt: this.createdAt.toISOString(),
+    };
+  }
+
+  toJSONWithState() {
+    const players: SharedPlayer[] = Array.from(
       this.players.values().filter((p) => p.connected)
     ).map((p) => ({
       id: p.id,
       name: p.name,
       avatar: p.avatar,
+      connected: p.connected,
     }));
 
     return {
-      id: this.id,
-      owner: this.owner,
-      maxPlayers: this.maxPlayers,
+      ...this.toJSON(),
       players,
-      createdAt: this.createdAt,
+      status: this.status,
     };
   }
 }

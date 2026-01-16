@@ -7,7 +7,7 @@ export const gameRoutes = new Elysia({ prefix: "/game" }).use(authPlugin).post(
   "/",
   async ({ userId, body, set }) => {
     try {
-      const { maxPlayers } = body;
+      const { maxPlayers, numRounds, collections } = body;
 
       let gameId: string | null = null;
       let attempts = 0;
@@ -31,7 +31,13 @@ export const gameRoutes = new Elysia({ prefix: "/game" }).use(authPlugin).post(
         };
       }
 
-      const game = GameRegistry.create(gameId, userId, maxPlayers);
+      const game = GameRegistry.create(
+        gameId,
+        userId,
+        maxPlayers,
+        numRounds,
+        collections
+      );
 
       return {
         success: true,

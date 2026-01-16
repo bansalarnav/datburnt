@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { UserIcon } from "lucide-react";
 import { useState } from "react";
-import { AuthModal } from "@/components/AuthModal";
-import { CreateRoomModal } from "@/components/CreateRoomModal";
+import { AuthModal } from "@/components/auth/AuthModal";
+import { CreateRoomModal } from "@/components/lobby/CreateRoomModal";
 import { PrimaryButton } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useUserStore } from "@/state/user";

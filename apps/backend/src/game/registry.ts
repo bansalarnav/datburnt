@@ -7,8 +7,16 @@ export namespace GameRegistry {
     return games.get(id);
   }
 
-  export function create(id: string, owner: string, maxPlayers: number): Game {
-    const game = new Game(id, owner, maxPlayers, () => games.delete(id));
+  export function create(
+    id: string,
+    owner: string,
+    maxPlayers: number,
+    numRounds: number,
+    collections: string[]
+  ): Game {
+    const game = new Game(id, owner, maxPlayers, numRounds, collections, () =>
+      games.delete(id)
+    );
     games.set(id, game);
     return game;
   }

@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { RefreshCwIcon, UserIcon } from "lucide-react";
 import { useState } from "react";
-import { ChangePasswordModal } from "@/components/ChangePasswordModal";
-import { CollectionsList } from "@/components/CollectionsList";
-import { EditUsernameModal } from "@/components/EditUsernameModal";
-import { useUserStore, type User } from "@/state/user";
+import { CollectionsList } from "@/components/collections/CollectionsList";
+import { ChangePasswordModal } from "@/components/user/ChangePasswordModal";
+import { EditUsernameModal } from "@/components/user/EditUsernameModal";
+import { type User, useUserStore } from "@/state/user";
 import { apiClient } from "@/utils/apiClient";
 
 export const Route = createFileRoute("/my-account")({
